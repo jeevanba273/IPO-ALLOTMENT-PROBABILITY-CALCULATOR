@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>IPO Allotment Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            padding: 20px;
+            max-width: 600px;
+            margin: auto;
+        }
+        h1, h2 {
+            text-align: center;
+        }
+        label, input, button {
+            display: block;
+            width: 100%;
+            margin: 10px 0;
+        }
+        input, button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            background: #fff;
+            border: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>IPO Allotment Calculator</h1>
+    <form id="ipoForm">
+        <h2>Enter Oversubscription & Shares Offered</h2>
+
+        <label>Retail Oversubscription (X times)</label>
+        <input type="number" id="retailSub" step="0.01" min="0" required>
+
+        <label>Shares Offered in Retail</label>
+        <input type="number" id="retailShares" min="1" required>
+
+        <label>Small HNI Oversubscription (X times)</label>
+        <input type="number" id="shniSub" step="0.01" min="0" required>
+
+        <label>Shares Offered in SHNI</label>
+        <input type="number" id="shniShares" min="1" required>
+
+        <label>Big HNI Oversubscription (X times)</label>
+        <input type="number" id="bhniSub" step="0.01" min="0" required>
+
+        <label>Shares Offered in BHNI</label>
+        <input type="number" id="bhniShares" min="1" required>
+
+        <h2>Optional: Shareholder Details</h2>
+        <label>Shareholder Oversubscription (X times)</label>
+        <input type="number" id="shareholderSub" step="0.01" min="0">
+
+        <label>Number of Shares Applied by Shareholder</label>
+        <input type="number" id="shareholderLots" min="1">
+
+        <button type="submit">Calculate</button>
+    </form>
+
+    <div id="result" class="result"></div>
+
+    <script>
+        document.getElementById('ipoForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+
+            // Fetch user inputs
+            const retailSub = parseFloat(document.getElementById('retailSub').value);
+            const retailShares = parseFloat(document.getElementById('retailShares').value);
+
+            const shniSub = parseFloat(document.getElementById('shniSub').value);
+            const shniShares = parseFloat(document.getElementById('shniShares').value);
+
+            const bhniSub = parseFloat(document.getElementById('bhniSub').value);
+            const bhniShares = parseFloat(document.getElementById('bhniShares').value);
+
+            const shareholderSub = document.getElementById('shareholderSub').value;
+            const shareholderLots = document.getElementById('shareholderLots').value;
+
+            // Calculate probabilities
+            const retailProb = ((retailShares / (retailSub * retailShares)) * 100).toFixed(2);
+            const shniProb = ((shniShares / (shniSub * shniShares)) * 100).toFixed(2);
+            const bhniProb = ((5 * bhniShares / (bhniSub * bhniShares)) * 100).toFixed(2);
+
+            // Prepare results output
+            let resultHTML = `
+                <h2>Allotment Probabilities</h2>
+                <p><strong>Retail:</strong> ${retailProb}%</p>
+                <p><strong>Small HNI:</strong> ${shniProb}%</p>
+                <p><strong>Big HNI:</strong> ${bhniProb}%</p>
+            `;
+
+            // If Shareholder details are provided, calculate and display
+            if (shareholderSub && shareholderLots) {
+                const shareholderProb = ((parseFloat(shareholderLots) / parseFloat(shareholderSub)) * 100).toFixed(2);
+                resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
+            }
+
+            // Display results
+            document.getElementById('result').innerHTML = resultHTML;
+        });
+    </script>
+</body>
+</html>
