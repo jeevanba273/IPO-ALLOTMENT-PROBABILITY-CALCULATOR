@@ -135,7 +135,11 @@
           ).toFixed(2);
 
           // Predict allotment for Retail based on probability and user input
-            let predictedRetailAllotment = Math.min(13, (parseFloat(retailLots) * (retailProb / 100)).toFixed(0));
+            let predictedRetailAllotment = Math.min(13, Math.floor(parseFloat(retailLots) * (parseFloat(retailProb) / 100)));
+
+          // If you applied for 10 lots, the predicted allotment should not exceed 10 lots
+            predictedRetailAllotment = Math.min(predictedRetailAllotment, parseInt(retailLots, 10));
+
 
 
           // Suggest category based on highest probability
