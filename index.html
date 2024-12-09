@@ -135,13 +135,9 @@
           ).toFixed(2);
 
           // Predict allotment for Retail based on probability and user input
-          let predictedRetailAllotment = 0;
-          if (retailLots) {
-            predictedRetailAllotment = (
-              parseFloat(retailLots) *
-              (retailProb / 100)
-            ).toFixed(0);
-          }
+          // Predict allotment for Retail based on probability and user input
+          let predictedRetailAllotment = Math.min(parseFloat(retailLots), (parseFloat(retailLots) * (retailProb / 100)).toFixed(0));
+
 
           // Suggest category based on highest probability
 
