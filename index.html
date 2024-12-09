@@ -135,38 +135,34 @@
           ).toFixed(2);
 
           // Predict allotment for Retail based on probability and user input
-            let predictedRetailAllotment = Math.floor(parseFloat(retailLots) * (parseFloat(retailProb) / 100));
+          let predictedRetailAllotment = Math.floor(parseFloat(retailLots) * (parseFloat(retailProb) / 100));
 
           // Cap the predicted allotment at the maximum of 13 lots and ensure it doesn't exceed the number of lots you applied for
-            predictedRetailAllotment = Math.min(predictedRetailAllotment, 13, parseInt(retailLots, 10));
-
-
+          predictedRetailAllotment = Math.min(predictedRetailAllotment, 13);
 
           // Suggest category based on highest probability
+          let suggestedCategory = "None";
+          let suggestedLots = 0;
 
-            let suggestedCategory = "None";
-            let suggestedLots = 0;
-
-            if (parseFloat(retailProb) > Math.max(parseFloat(shniProb), parseFloat(bhniProb))) {
-                suggestedCategory = "Retail";
-                // Suggest 13 lots if Retail has the highest probability
-                suggestedLots = 13;  // Suggest 13 lots for Retail
-            } else if (parseFloat(shniProb) > parseFloat(bhniProb)) {
-                suggestedCategory = "Small HNI";
-                suggestedLots = "1";  // Default for SHNI
-            } else {
-                suggestedCategory = "Big HNI";
-                suggestedLots = "1";  // Default for BHNI
-            }
-
+          if (parseFloat(retailProb) > Math.max(parseFloat(shniProb), parseFloat(bhniProb))) {
+            suggestedCategory = "Retail";
+            // Suggest 13 lots if Retail has the highest probability
+            suggestedLots = 13;  // Suggest 13 lots for Retail
+          } else if (parseFloat(shniProb) > parseFloat(bhniProb)) {
+            suggestedCategory = "Small HNI";
+            suggestedLots = 1;  // Default for SHNI
+          } else {
+            suggestedCategory = "Big HNI";
+            suggestedLots = 1;  // Default for BHNI
+          }
 
           // Prepare results output
           let resultHTML = `
-                <h2>Allotment Probabilities</h2>
-                <p><strong>Retail:</strong> ${retailProb}%</p>
-                <p><strong>Small HNI:</strong> ${shniProb}%</p>
-                <p><strong>Big HNI:</strong> ${bhniProb}%</p>
-            `;
+            <h2>Allotment Probabilities</h2>
+            <p><strong>Retail:</strong> ${retailProb}%</p>
+            <p><strong>Small HNI:</strong> ${shniProb}%</p>
+            <p><strong>Big HNI:</strong> ${bhniProb}%</p>
+          `;
 
           // If Shareholder details are provided, calculate and display
           if (shareholderSub && shareholderLots) {
@@ -184,10 +180,10 @@
 
           // Display suggestion
           resultHTML += `
-                <h2>Suggested Category to Apply</h2>
-                <p><strong>Category:</strong> ${suggestedCategory}</p>
-                <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
-            `;
+            <h2>Suggested Category to Apply</h2>
+            <p><strong>Category:</strong> ${suggestedCategory}</p>
+            <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
+          `;
 
           // Display results
           document.getElementById("result").innerHTML = resultHTML;
