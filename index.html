@@ -75,6 +75,9 @@
       <label>Shareholder Oversubscription (X times)</label>
       <input type="number" id="shareholderSub" step="0.01" min="0" />
 
+      <label>Shares Offered in Shareholder</label>
+      <input type="number" id="shareholderShares" min="1" required />
+
       <label>Number of Shares Applied by Shareholder</label>
       <input type="number" id="shareholderLots" min="1" />
 
@@ -82,7 +85,8 @@
         Optional: Retail Category - Number of Lots You Are Considering to Apply
       </h2>
       <label>Retail Category Lots</label>
-      <input type="number" id="retailLots" min="1" />
+      <input type="number" id="retailLots" min="1" max="13" />
+
 
       <button type="submit">Calculate</button>
     </form>
@@ -117,10 +121,13 @@
             document.getElementById("shareholderSub").value;
           const shareholderLots =
             document.getElementById("shareholderLots").value;
+          const shareholderShares = parseFloat(
+            document.getElementById("shareholderShares").value
+          );
 
           const retailLots = document.getElementById("retailLots").value;
 
-          // Calculate probabilities
+          // Calculate probabilities for Retail, SHNI, BHNI
           const retailProb = (
             (retailShares / (retailSub * retailShares)) *
             100
@@ -134,11 +141,21 @@
             100
           ).toFixed(2);
 
+          // Calculate proportionate allotment for Shareholder quota
+          let proportionateShareholderAllotment = 0;
+          if (shareholderShares && shareholderLots) {
+            const totalAppliedShares =
+              shareholderShares * parseFloat(shareholderSub);
+            proportionateShareholderAllotment = Math.floor(
+              (parseFloat(shareholderLots) / totalAppliedShares) * 92_592_593 // Shares Offered in Shareholder
+            );
+          }
+
           // Predict allotment for Retail based on probability and user input
           let predictedRetailAllotment = Math.floor(parseFloat(retailLots) * (parseFloat(retailProb) / 100));
 
           // Cap the predicted allotment at the maximum of 13 lots and ensure it doesn't exceed the number of lots you applied for
-          predictedRetailAllotment = Math.min(predictedRetailAllotment, 13);
+          predictedRetailAllotment = Math.min(predictedRetailAllotment, 13, parseInt(retailLots, 10));
 
           // Suggest category based on highest probability
           let suggestedCategory = "None";
@@ -146,9 +163,8 @@
 
           if (parseFloat(retailProb) > Math.max(parseFloat(shniProb), parseFloat(bhniProb))) {
             suggestedCategory = "Retail";
-            // Suggest 13 lots if Retail has the highest probability
             suggestedLots = 13;  // Suggest 13 lots for Retail
-          } else if (parseFloat(shniProb) > parseFloat(bhniProb)) {
+          } else if (parseFloat(shniProb) > Math.max(parseFloat(bhniProb))) {
             suggestedCategory = "Small HNI";
             suggestedLots = 1;  // Default for SHNI
           } else {
@@ -158,19 +174,15 @@
 
           // Prepare results output
           let resultHTML = `
-            <h2>Allotment Probabilities</h2>
-            <p><strong>Retail:</strong> ${retailProb}%</p>
-            <p><strong>Small HNI:</strong> ${shniProb}%</p>
-            <p><strong>Big HNI:</strong> ${bhniProb}%</p>
-          `;
+                <h2>Allotment Probabilities</h2>
+                <p><strong>Retail:</strong> ${retailProb}%</p>
+                <p><strong>Small HNI:</strong> ${shniProb}%</p>
+                <p><strong>Big HNI:</strong> ${bhniProb}%</p>
+            `;
 
           // If Shareholder details are provided, calculate and display
           if (shareholderSub && shareholderLots) {
-            const shareholderProb = (
-              (parseFloat(shareholderLots) / parseFloat(shareholderSub)) *
-              100
-            ).toFixed(2);
-            resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
+            resultHTML += `<p><strong>Proportionate Shareholder Allotment:</strong> ${proportionateShareholderAllotment} shares</p>`;
           }
 
           // Display predicted allotment for Retail
@@ -180,10 +192,10 @@
 
           // Display suggestion
           resultHTML += `
-            <h2>Suggested Category to Apply</h2>
-            <p><strong>Category:</strong> ${suggestedCategory}</p>
-            <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
-          `;
+                <h2>Suggested Category to Apply</h2>
+                <p><strong>Category:</strong> ${suggestedCategory}</p>
+                <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
+            `;
 
           // Display results
           document.getElementById("result").innerHTML = resultHTML;
