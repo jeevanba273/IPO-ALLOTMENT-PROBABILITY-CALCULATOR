@@ -5,7 +5,7 @@ This is a web-based tool for calculating **IPO allotment probabilities** based o
 ---
 
 ## 🚀 **Live Demo**  
-[Visit the Live Site](https://jeevanba273.github.io/IPO-ALLOTMENT-PROBABILITY-FINDER/)  
+<a href="[https://your-live-site-link](https://jeevanba273.github.io/IPO-ALLOTMENT-PROBABILITY-FINDER/)" target="_blank">Visit the Live Site</a>
 
 ---
 
