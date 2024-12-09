@@ -1,123 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>IPO Allotment Calculator</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
-            background: #f4f4f9;
-            padding: 20px;
-            max-width: 600px;
-            margin: auto;
-        }
-        h1, h2 {
-            text-align: center;
-        }
-        label, input, button {
-            display: block;
-            width: 100%;
-            margin: 10px 0;
-        }
-        input, button {
-            padding: 10px;
-            font-size: 16px;
-        }
-        input[type="number"] {
-            -moz-appearance: textfield;
-        }
-        button {
-            background: #007bff;
-            color: white;
-            border: none;
-            cursor: pointer;
-        }
-        button:hover {
-            background: #0056b3;
-        }
-        .result {
-            margin-top: 20px;
-            padding: 10px;
-            background: #fff;
-            border: 1px solid #ddd;
-        }
+      body {
+        font-family: Arial, sans-serif;
+        background: #f4f4f9;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+      }
+      h1,
+      h2 {
+        text-align: center;
+      }
+      label,
+      input,
+      button {
+        display: block;
+        width: 100%;
+        margin: 10px 0;
+      }
+      input,
+      button {
+        padding: 10px;
+        font-size: 16px;
+      }
+      input[type="number"] {
+        -moz-appearance: textfield;
+      }
+      button {
+        background: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+      }
+      button:hover {
+        background: #0056b3;
+      }
+      .result {
+        margin-top: 20px;
+        padding: 10px;
+        background: #fff;
+        border: 1px solid #ddd;
+      }
     </style>
-</head>
-<body>
+  </head>
+  <body>
     <h1>IPO Allotment Calculator</h1>
     <form id="ipoForm">
-        <h2>Enter Oversubscription & Shares Offered</h2>
+      <h2>Enter Oversubscription & Shares Offered</h2>
 
-        <label>Retail Oversubscription (X times)</label>
-        <input type="number" id="retailSub" step="0.01" min="0" required>
+      <label>Retail Oversubscription (X times)</label>
+      <input type="number" id="retailSub" step="0.01" min="0" required />
 
-        <label>Shares Offered in Retail</label>
-        <input type="number" id="retailShares" min="1" required>
+      <label>Shares Offered in Retail</label>
+      <input type="number" id="retailShares" min="1" required />
 
-        <label>Small HNI Oversubscription (X times)</label>
-        <input type="number" id="shniSub" step="0.01" min="0" required>
+      <label>Small HNI Oversubscription (X times)</label>
+      <input type="number" id="shniSub" step="0.01" min="0" required />
 
-        <label>Shares Offered in SHNI</label>
-        <input type="number" id="shniShares" min="1" required>
+      <label>Shares Offered in SHNI</label>
+      <input type="number" id="shniShares" min="1" required />
 
-        <label>Big HNI Oversubscription (X times)</label>
-        <input type="number" id="bhniSub" step="0.01" min="0" required>
+      <label>Big HNI Oversubscription (X times)</label>
+      <input type="number" id="bhniSub" step="0.01" min="0" required />
 
-        <label>Shares Offered in BHNI</label>
-        <input type="number" id="bhniShares" min="1" required>
+      <label>Shares Offered in BHNI</label>
+      <input type="number" id="bhniShares" min="1" required />
 
-        <h2>Optional: Shareholder Details</h2>
-        <label>Shareholder Oversubscription (X times)</label>
-        <input type="number" id="shareholderSub" step="0.01" min="0">
+      <h2>Optional: Shareholder Details</h2>
+      <label>Shareholder Oversubscription (X times)</label>
+      <input type="number" id="shareholderSub" step="0.01" min="0" />
 
-        <label>Number of Shares Applied by Shareholder</label>
-        <input type="number" id="shareholderLots" min="1">
+      <label>Number of Shares Applied by Shareholder</label>
+      <input type="number" id="shareholderLots" min="1" />
 
-        <button type="submit">Calculate</button>
+      <h2>
+        Optional: Retail Category - Number of Lots You Are Considering to Apply
+      </h2>
+      <label>Retail Category Lots</label>
+      <input type="number" id="retailLots" min="1" />
+
+      <button type="submit">Calculate</button>
     </form>
 
     <div id="result" class="result"></div>
 
     <script>
-        document.getElementById('ipoForm').addEventListener('submit', function(e) {
-            e.preventDefault();
+      document
+        .getElementById("ipoForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
 
-            // Fetch user inputs
-            const retailSub = parseFloat(document.getElementById('retailSub').value);
-            const retailShares = parseFloat(document.getElementById('retailShares').value);
+          // Fetch user inputs
+          const retailSub = parseFloat(
+            document.getElementById("retailSub").value
+          );
+          const retailShares = parseFloat(
+            document.getElementById("retailShares").value
+          );
 
-            const shniSub = parseFloat(document.getElementById('shniSub').value);
-            const shniShares = parseFloat(document.getElementById('shniShares').value);
+          const shniSub = parseFloat(document.getElementById("shniSub").value);
+          const shniShares = parseFloat(
+            document.getElementById("shniShares").value
+          );
 
-            const bhniSub = parseFloat(document.getElementById('bhniSub').value);
-            const bhniShares = parseFloat(document.getElementById('bhniShares').value);
+          const bhniSub = parseFloat(document.getElementById("bhniSub").value);
+          const bhniShares = parseFloat(
+            document.getElementById("bhniShares").value
+          );
 
-            const shareholderSub = document.getElementById('shareholderSub').value;
-            const shareholderLots = document.getElementById('shareholderLots').value;
+          const shareholderSub =
+            document.getElementById("shareholderSub").value;
+          const shareholderLots =
+            document.getElementById("shareholderLots").value;
 
-            // Calculate probabilities
-            const retailProb = ((retailShares / (retailSub * retailShares)) * 100).toFixed(2);
-            const shniProb = ((shniShares / (shniSub * shniShares)) * 100).toFixed(2);
-            const bhniProb = ((5 * bhniShares / (bhniSub * bhniShares)) * 100).toFixed(2);
+          const retailLots = document.getElementById("retailLots").value;
 
-            // Prepare results output
-            let resultHTML = `
+          // Calculate probabilities
+          const retailProb = (
+            (retailShares / (retailSub * retailShares)) *
+            100
+          ).toFixed(2);
+          const shniProb = (
+            (shniShares / (shniSub * shniShares)) *
+            100
+          ).toFixed(2);
+          const bhniProb = (
+            ((5 * bhniShares) / (bhniSub * bhniShares)) *
+            100
+          ).toFixed(2);
+
+          // Predict allotment for Retail based on probability and user input
+          let predictedRetailAllotment = 0;
+          if (retailLots) {
+            predictedRetailAllotment = (
+              parseFloat(retailLots) *
+              (retailProb / 100)
+            ).toFixed(0);
+          }
+
+          // Suggest category based on highest probability
+
+            let suggestedCategory = "None";
+            let suggestedLots = 0;
+
+            if (parseFloat(retailProb) > Math.max(parseFloat(shniProb), parseFloat(bhniProb))) {
+                suggestedCategory = "Retail";
+                // Suggest 13 lots if Retail has the highest probability
+                suggestedLots = 13;  // Suggest 13 lots for Retail
+            } else if (parseFloat(shniProb) > parseFloat(bhniProb)) {
+                suggestedCategory = "Small HNI";
+                suggestedLots = "1";  // Default for SHNI
+            } else {
+                suggestedCategory = "Big HNI";
+                suggestedLots = "1";  // Default for BHNI
+            }
+
+
+          // Prepare results output
+          let resultHTML = `
                 <h2>Allotment Probabilities</h2>
                 <p><strong>Retail:</strong> ${retailProb}%</p>
                 <p><strong>Small HNI:</strong> ${shniProb}%</p>
                 <p><strong>Big HNI:</strong> ${bhniProb}%</p>
             `;
 
-            // If Shareholder details are provided, calculate and display
-            if (shareholderSub && shareholderLots) {
-                const shareholderProb = ((parseFloat(shareholderLots) / parseFloat(shareholderSub)) * 100).toFixed(2);
-                resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
-            }
+          // If Shareholder details are provided, calculate and display
+          if (shareholderSub && shareholderLots) {
+            const shareholderProb = (
+              (parseFloat(shareholderLots) / parseFloat(shareholderSub)) *
+              100
+            ).toFixed(2);
+            resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
+          }
 
-            // Display results
-            document.getElementById('result').innerHTML = resultHTML;
+          // Display predicted allotment for Retail
+          if (retailLots) {
+            resultHTML += `<p><strong>Predicted Retail Allotment:</strong> ${predictedRetailAllotment} lots</p>`;
+          }
+
+          // Display suggestion
+          resultHTML += `
+                <h2>Suggested Category to Apply</h2>
+                <p><strong>Category:</strong> ${suggestedCategory}</p>
+                <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
+            `;
+
+          // Display results
+          document.getElementById("result").innerHTML = resultHTML;
         });
     </script>
-</body>
+  </body>
 </html>
