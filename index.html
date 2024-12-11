@@ -12,19 +12,15 @@
         max-width: 600px;
         margin: auto;
       }
-      h1,
-      h2 {
+      h1, h2 {
         text-align: center;
       }
-      label,
-      input,
-      button {
+      label, input, button {
         display: block;
         width: 100%;
         margin: 10px 0;
       }
-      input,
-      button {
+      input, button {
         padding: 10px;
         font-size: 16px;
       }
@@ -79,11 +75,11 @@
       <input type="number" id="shareholderShares" min="1" />
 
       <label>Number of Shares Applied by Shareholder</label>
-      <input type="number" id="shareholderLots" min="1" />
+      <input type="number" id="shareholderLots" min="1" max="13" />
 
       <h2>Optional: Retail Category - Number of Lots You Are Considering to Apply</h2>
       <label>Retail Category Lots</label>
-      <input type="number" id="retailLots" min="1" max="13" required />
+      <input type="number" id="retailLots" min="1" max="13" />
 
       <button type="submit">Calculate</button>
     </form>
@@ -91,123 +87,89 @@
     <div id="result" class="result"></div>
 
     <script>
-      document
-        .getElementById("ipoForm")
-        .addEventListener("submit", function (e) {
-          e.preventDefault();
+      document.getElementById("ipoForm").addEventListener("submit", function (e) {
+        e.preventDefault();
 
-          // Fetch user inputs
-          const retailSub = parseFloat(
-            document.getElementById("retailSub").value
+        // Fetch user inputs
+        const retailSub = parseFloat(document.getElementById("retailSub").value);
+        const retailShares = parseFloat(document.getElementById("retailShares").value);
+
+        const shniSub = parseFloat(document.getElementById("shniSub").value);
+        const shniShares = parseFloat(document.getElementById("shniShares").value);
+
+        const bhniSub = parseFloat(document.getElementById("bhniSub").value);
+        const bhniShares = parseFloat(document.getElementById("bhniShares").value);
+
+        const shareholderSub = parseFloat(document.getElementById("shareholderSub").value) || 0;
+        const shareholderShares = parseFloat(document.getElementById("shareholderShares").value) || 0;
+        const shareholderLots = parseFloat(document.getElementById("shareholderLots").value) || 0;
+
+        const retailLots = parseFloat(document.getElementById("retailLots").value) || 0;
+
+        // Calculations
+        const retailProb = ((retailShares / (retailSub * retailShares)) * 100).toFixed(2);
+        const shniProb = ((shniShares / (shniSub * shniShares)) * 100).toFixed(2);
+        const bhniProb = ((5 * bhniShares / (bhniSub * bhniShares)) * 100).toFixed(2);
+
+        let proportionateShareholderAllotment = 0;
+        let shareholderProb = 0;
+
+        if (shareholderSub && shareholderShares && shareholderLots) {
+          proportionateShareholderAllotment = Math.floor(
+            shareholderLots / shareholderSub
           );
-          const retailShares = parseFloat(
-            document.getElementById("retailShares").value
+
+          proportionateShareholderAllotment = Math.min(
+            proportionateShareholderAllotment, shareholderLots
           );
 
-          const shniSub = parseFloat(document.getElementById("shniSub").value);
-          const shniShares = parseFloat(
-            document.getElementById("shniShares").value
-          );
-
-          const bhniSub = parseFloat(document.getElementById("bhniSub").value);
-          const bhniShares = parseFloat(
-            document.getElementById("bhniShares").value
-          );
-
-          // Shareholder Data (Optional)
-          const shareholderSub = document.getElementById("shareholderSub").value;
-          const shareholderLots = document.getElementById("shareholderLots").value;
-          const shareholderShares = parseFloat(
-            document.getElementById("shareholderShares").value
-          );
-
-          const retailLots = document.getElementById("retailLots").value;
-
-          // Calculate probabilities for Retail, Small HNI, and Big HNI
-          const retailProb = (
-            (retailShares / (retailSub * retailShares)) *
-            100
+          shareholderProb = (
+            (proportionateShareholderAllotment / shareholderLots) * 100
           ).toFixed(2);
-          const shniProb = (
-            (shniShares / (shniSub * shniShares)) *
-            100
-          ).toFixed(2);
-          const bhniProb = (
-            ((5 * bhniShares) / (bhniSub * bhniShares)) *
-            100
-          ).toFixed(2);
+        }
 
-          // Shareholder Calculations (Only if data is entered)
-          let shareholderProb = 0;
-          let proportionateShareholderAllotment = 0;
-          if (shareholderShares && shareholderLots) {
-            // Calculate proportionate allotment for Shareholder
-            proportionateShareholderAllotment = Math.floor(
-              (parseFloat(shareholderLots) / retailShares) * shareholderShares
-            );
+        const predictedRetailAllotment = Math.min(
+          Math.floor(retailLots * (retailProb / 100)),
+          13, retailLots
+        );
 
-            // Cap the shareholder allotment so it doesn't exceed the applied shares
-            proportionateShareholderAllotment = Math.min(proportionateShareholderAllotment, parseInt(shareholderLots, 10));
+        let suggestedCategory = "None";
+        let suggestedLots = 0;
 
-            shareholderProb = (
-              (proportionateShareholderAllotment / shareholderShares) *
-              100
-            ).toFixed(2);
-          }
+        if (retailProb > Math.max(shniProb, bhniProb, shareholderProb)) {
+          suggestedCategory = "Retail";
+          suggestedLots = 13;
+        } else if (shniProb > Math.max(bhniProb, shareholderProb)) {
+          suggestedCategory = "Small HNI";
+          suggestedLots = 1;
+        } else if (shareholderProb > Math.max(retailProb, shniProb, bhniProb)) {
+          suggestedCategory = "Shareholder";
+          suggestedLots = proportionateShareholderAllotment;
+        } else {
+          suggestedCategory = "Big HNI";
+          suggestedLots = 1;
+        }
 
-          // Predict allotment for Retail based on probability and user input
-          let predictedRetailAllotment = Math.floor(parseFloat(retailLots) * (parseFloat(retailProb) / 100));
+        let resultHTML = `<h2>Allotment Probabilities</h2>
+          <p><strong>Retail:</strong> ${retailProb}%</p>
+          <p><strong>Small HNI:</strong> ${shniProb}%</p>
+          <p><strong>Big HNI:</strong> ${bhniProb}%</p>`;
 
-          // Cap the predicted allotment at the maximum of 13 lots and ensure it doesn't exceed the number of lots you applied for
-          predictedRetailAllotment = Math.min(predictedRetailAllotment, 13, parseInt(retailLots, 10));
+        if (shareholderSub && shareholderShares && shareholderLots) {
+          resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
+          resultHTML += `<p><strong>Proportionate Shareholder Allotment:</strong> ${proportionateShareholderAllotment} shares</p>`;
+        }
 
-          // Suggest category based on highest probability
-          let suggestedCategory = "None";
-          let suggestedLots = 0;
+        if (retailLots) {
+          resultHTML += `<p><strong>Predicted Retail Allotment:</strong> ${predictedRetailAllotment} lots</p>`;
+        }
 
-          if (parseFloat(retailProb) > Math.max(parseFloat(shniProb), parseFloat(bhniProb), parseFloat(shareholderProb))) {
-            suggestedCategory = "Retail";
-            suggestedLots = 13;  // Suggest 13 lots for Retail
-          } else if (parseFloat(shniProb) > Math.max(parseFloat(bhniProb), parseFloat(shareholderProb))) {
-            suggestedCategory = "Small HNI";
-            suggestedLots = 1;  // Default for SHNI
-          } else if (parseFloat(shareholderProb) > Math.max(parseFloat(retailProb), parseFloat(shniProb), parseFloat(bhniProb))) {
-            suggestedCategory = "Shareholder";
-            suggestedLots = Math.min(proportionateShareholderAllotment, 13);  // Cap at 13 lots for Shareholder category
-          } else {
-            suggestedCategory = "Big HNI";
-            suggestedLots = 1;  // Default for BHNI
-          }
+        resultHTML += `<h2>Suggested Category to Apply</h2>
+          <p><strong>Category:</strong> ${suggestedCategory}</p>
+          <p><strong>Number of Lots:</strong> ${suggestedLots}</p>`;
 
-          // Prepare results output
-          let resultHTML = ` 
-                <h2>Allotment Probabilities</h2>
-                <p><strong>Retail:</strong> ${retailProb}%</p>
-                <p><strong>Small HNI:</strong> ${shniProb}%</p>
-                <p><strong>Big HNI:</strong> ${bhniProb}%</p>
-            `;
-
-          // If Shareholder details are provided, calculate and display
-          if (shareholderSub && shareholderShares && shareholderLots) {
-            resultHTML += `<p><strong>Shareholder:</strong> ${shareholderProb}%</p>`;
-            resultHTML += `<p><strong>Proportionate Shareholder Allotment:</strong> ${proportionateShareholderAllotment} shares</p>`;
-          }
-
-          // Display predicted allotment for Retail
-          if (retailLots) {
-            resultHTML += `<p><strong>Predicted Retail Allotment:</strong> ${predictedRetailAllotment} lots</p>`;
-          }
-
-          // Display suggestion
-          resultHTML += ` 
-                <h2>Suggested Category to Apply</h2>
-                <p><strong>Category:</strong> ${suggestedCategory}</p>
-                <p><strong>Number of Lots:</strong> ${suggestedLots}</p>
-            `;
-
-          // Display results
-          document.getElementById("result").innerHTML = resultHTML;
-        });
+        document.getElementById("result").innerHTML = resultHTML;
+      });
     </script>
   </body>
 </html>
