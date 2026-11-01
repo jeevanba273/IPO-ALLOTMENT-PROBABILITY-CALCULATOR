@@ -6,9 +6,15 @@ the minimum. That is a LOWER bound: applicants who bid more mean fewer of
 them, so the chance rises to avg_min_bids/times. times <= 1 means everyone is
 allotted in full.
 
-NII (proportionate, as rules_v1.yaml says): expected shares = shares applied /
-times; whole lots are allotted and the fraction is settled by lottery, so
-P(at least one lot) = min(1, expected lots).
+NII, proportionate: expected shares = shares applied / times; whole lots are
+allotted and the fraction is settled by lottery, so P(at least one lot) =
+min(1, expected lots).
+
+NII, SEBI 2022 (rules_v1.yaml nii.method: sebi_2022): within the sub-category,
+the minimum NII bid goes to as many applicants as the reservation allows, by
+lottery when it is oversubscribed, and only leftover shares are shared
+proportionately. That is the retail arithmetic in units of the minimum NII bid:
+P runs from 1/times to avg/times, and a winner gets the minimum NII bid.
 
 Several applications (different PANs) are independent draws: P(any) = 1 - (1 - p)^n.
 """
@@ -69,6 +75,30 @@ def nii_outcome(shares_applied: int, lot_size: int, times: float) -> NiiOutcome:
     expected = float(shares_applied) if times <= 1 else shares_applied / times
     lots = expected / lot_size
     return NiiOutcome(expected_shares=expected, expected_lots=lots, p_at_least_one_lot=min(1.0, lots))
+
+
+def min_bid_lottery_shares(shares_applied: int, min_bid_shares: int, times: float, avg_min_bids: float) -> tuple[float, float]:
+    """Expected shares under a lottery for the minimum bid (SEBI 2022 NII): (most competition, least).
+
+    Not oversubscribed: allotted in full. Oversubscribed with every winner held to
+    the minimum bid (P < 1): P x minimum bid. When everyone can get the minimum
+    bid (P = 1 at the high end), the shares left over are shared in proportion
+    to what each applied for above the minimum.
+    """
+    _check_times(times)
+    if shares_applied < min_bid_shares or min_bid_shares <= 0:
+        raise ValueError("an application cannot be below the minimum bid")
+    if times <= 1:
+        return float(shares_applied), float(shares_applied)
+    odds = retail_odds(times, avg_min_bids)
+    low = odds.low * min_bid_shares
+    if odds.high < 1 or avg_min_bids <= 1:
+        high = odds.high * min_bid_shares
+    else:
+        # Leftover share of the excess demand: (1/times - 1/avg) / (1 - 1/avg).
+        leftover = max(0.0, (1 / times - 1 / avg_min_bids) / (1 - 1 / avg_min_bids))
+        high = min_bid_shares + (shares_applied - min_bid_shares) * leftover
+    return low, high
 
 
 def any_of(p: float, applications: int) -> float:

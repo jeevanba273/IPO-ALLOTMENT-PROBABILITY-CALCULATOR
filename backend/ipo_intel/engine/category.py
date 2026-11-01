@@ -44,6 +44,12 @@ def max_retail_lots(lot_size: int, cutoff: float, rules: Rules) -> int:
     return math.floor(rules.categories.retail_max_rs / (lot_size * cutoff))
 
 
+def min_nii_lots(category: Category, lot_size: int, cutoff: float, min_lots: int, rules: Rules) -> int:
+    """The minimum NII bid in lots: the fewest lots worth more than the sub-category's lower limit."""
+    limit = {Category.SNII: rules.categories.retail_max_rs, Category.BNII: rules.categories.snii_max_rs}[category]
+    return max(min_lots, math.floor(limit / (lot_size * cutoff)) + 1)
+
+
 def nii_share(category: Category, rules: Rules) -> float:
     """Fraction of the NII reservation open to this NII sub-category."""
     split = rules.categories.nii_split

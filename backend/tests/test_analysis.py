@@ -75,6 +75,22 @@ def test_application_size_sets_the_category(world):
         _analyse(world, "quietpeak-retail")
 
 
+def test_sebi_2022_nii_method(world):
+    sebi = RULES.model_copy(update={"nii": RULES.nii.model_copy(update={"method": "sebi_2022"})})
+    with world.db.connection() as conn:
+        a = analyse(conn, "acme-tech", rules=sebi, today=TODAY, lots=20)
+        plain = analyse(conn, "acme-tech", rules=RULES, today=TODAY, lots=20)
+    # NII is 1.20x; the minimum sNII bid is 14 lots (₹2,10,000), sNII applicants average 1.5 of them.
+    assert (a.category, a.method, a.allotment_unit_lots) == (Category.SNII, "sebi_2022", 14)
+    assert a.odds_now.p_low == pytest.approx(1 / 1.2)
+    assert a.odds_now.p_high == 1.0
+    assert a.odds_now.shares_low == pytest.approx(14 * 150 / 1.2)
+    # Everyone gets the minimum bid at the high end; half the excess demand is met from the leftover.
+    assert a.odds_now.shares_high == pytest.approx(14 * 150 + 6 * 150 * 0.5)
+    assert (plain.method, plain.allotment_unit_lots) == ("proportionate", 1)
+    assert plain.odds_now.shares_low == pytest.approx(20 * 150 / 1.2)
+
+
 def test_several_applications_and_ev(world):
     a = _analyse(world, "acme-tech", applications=3, gmp_rs=20, gmp_confidence=GmpConfidence.HIGH)
     p = 1 / 1.45

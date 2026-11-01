@@ -25,9 +25,19 @@ retail:
     sme: 1.0
 
 nii:
-  # proportionate: expected shares = shares applied / times subscribed, and
-  # P(at least one lot) = min(1, expected lots).
+  # How NII (above ₹2 lakh) applications are allotted:
+  #   proportionate: expected shares = shares applied / times subscribed, and
+  #     P(at least one lot) = min(1, expected lots).
+  #   sebi_2022: SEBI's rule since April 2022. In each sub-category, applicants first
+  #     get the minimum NII bid (smallest lots above ₹2 lakh for sNII, above ₹10 lakh
+  #     for bNII) by lottery; shares left after that are shared proportionately.
+  #     The chance of any allotment is then lower than proportionate shows.
   method: proportionate
+  # sebi_2022 only: average NII application, in minimum NII bids. The chance runs
+  # from 1/times (everyone bid the minimum) up to this number / times.
+  avg_min_bids_per_applicant:
+    snii: 1.5
+    bnii: 3.0
 
 ev:
   # GMP usually overstates the listing gain, so expected value is shown at these

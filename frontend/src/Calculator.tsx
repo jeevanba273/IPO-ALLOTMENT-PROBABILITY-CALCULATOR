@@ -32,8 +32,9 @@ function Meter({ low, high }: { low: number; high: number }) {
   );
 }
 
-function OddsBlock({ odds, title, applications, lotSize }: { odds: OddsResult; title: string; applications: number; lotSize: number }) {
+function OddsBlock({ odds, title, applications, lotSize, sebi }: { odds: OddsResult; title: string; applications: number; lotSize: number; sebi?: boolean }) {
   const retail = odds.category === "retail";
+  const lottery = retail || sebi;
   return (
     <div className="result">
       <div className="result-head">
@@ -42,7 +43,9 @@ function OddsBlock({ odds, title, applications, lotSize }: { odds: OddsResult; t
       </div>
       <div className="split" style={{ alignItems: "flex-end" }}>
         <div>
-          <div className="muted small">{retail ? "Chance of an allotment, per application" : "Chance of at least 1 lot, per application"}</div>
+          <div className="muted small">
+            {retail ? "Chance of an allotment, per application" : sebi ? "Chance of the minimum NII bid, per application" : "Chance of at least 1 lot, per application"}
+          </div>
           <div className="big-prob accent">{probRange(odds.p_low, odds.p_high)}</div>
         </div>
         {applications > 1 && (
@@ -56,7 +59,7 @@ function OddsBlock({ odds, title, applications, lotSize }: { odds: OddsResult; t
       <div className="muted small">
         Expected shares <span className="num fg2">{count(odds.shares_low)}{Math.abs(odds.shares_high - odds.shares_low) >= 0.5 ? ` – ${count(odds.shares_high)}` : ""}</span>
         {" "}({(odds.shares_low / lotSize).toFixed(2)}{Math.abs(odds.shares_high - odds.shares_low) >= 0.5 ? ` – ${(odds.shares_high / lotSize).toFixed(2)}` : ""} lots)
-        {retail && odds.p_low < odds.p_high && " · the low end assumes every applicant bid the minimum"}
+        {lottery && odds.p_low < odds.p_high && " · the low end assumes every applicant bid the minimum"}
       </div>
     </div>
   );
@@ -151,6 +154,7 @@ export function Calculator({ ipo }: { ipo: IpoSummary }) {
                 title={data.odds_now.basis === "final" ? "Final odds" : `Odds now (day ${data.latest?.day ?? "?"}${data.latest && !data.latest.complete ? ", still bidding" : ""})`}
                 applications={data.applications}
                 lotSize={data.lot_size}
+                sebi={data.method === "sebi_2022"}
               />
             ) : (
               <div className="result">
@@ -158,7 +162,14 @@ export function Calculator({ ipo }: { ipo: IpoSummary }) {
               </div>
             )}
             {data.odds_final && (
-              <OddsBlock odds={data.odds_final} title="Odds at the projected final subscription" applications={data.applications} lotSize={data.lot_size} />
+              <OddsBlock odds={data.odds_final} title="Odds at the projected final subscription" applications={data.applications} lotSize={data.lot_size} sebi={data.method === "sebi_2022"} />
+            )}
+            {data.method !== "lottery" && (
+              <div className="muted small">
+                {data.method === "sebi_2022"
+                  ? `NII allotment by SEBI's 2022 rule: the minimum NII bid (${data.allotment_unit_lots} lots, ${inr(data.allotment_unit_lots * data.lot_size * data.cutoff)}) goes by lottery, and only leftover shares are shared in proportion.`
+                  : "NII allotment modelled as proportionate. Set nii.method to sebi_2022 in the rules file for SEBI's lottery for the minimum NII bid."}
+              </div>
             )}
             {data.odds_now && !data.odds_final && data.odds_now.basis !== "final" && (
               <div className="muted small">

@@ -16,6 +16,7 @@ def test_default_rules_match_the_spec():
     assert rules.retail.avg_min_bids_per_applicant.for_board("mainboard") == 1.5
     assert rules.retail.avg_min_bids_per_applicant.for_board("sme") == 1.0
     assert rules.nii.method == "proportionate"
+    assert (rules.nii.avg_min_bids_per_applicant.snii, rules.nii.avg_min_bids_per_applicant.bnii) == (1.5, 3.0)
     assert rules.ev.gmp_multipliers == (0.5, 0.75, 1.0)
     assert rules.projection.min_samples >= 1
 
@@ -34,6 +35,8 @@ def _write(tmp_path: Path, change) -> Path:
         (lambda r: r["categories"]["nii_split"].update(snii=0.5), "must be 1"),
         (lambda r: r["categories"].update(snii_max_rs=100_000), "snii_max_rs must be above retail_max_rs"),
         (lambda r: r["retail"]["avg_min_bids_per_applicant"].update(sme=0.5), "avg_min_bids_per_applicant.sme"),
+        (lambda r: r["nii"].update(method="guesswork"), "nii.method"),
+        (lambda r: r["nii"]["avg_min_bids_per_applicant"].update(bnii=0.5), "nii.avg_min_bids_per_applicant.bnii"),
         (lambda r: r["ev"].update(gmp_multipliers=[1.0, 0.5]), "ascending"),
         (lambda r: r["ev"].update(gmp_multipliers=[0, 1]), "above 0"),
         (lambda r: r["projection"].update(min_samples=0), "projection.min_samples"),

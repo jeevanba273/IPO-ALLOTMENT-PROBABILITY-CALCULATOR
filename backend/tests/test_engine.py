@@ -4,13 +4,22 @@ import math
 
 import pytest
 
-from ipo_intel.engine.allotment import Odds, any_of, nii_outcome, retail_applications, retail_odds, retail_winners
+from ipo_intel.engine.allotment import (
+    Odds,
+    any_of,
+    min_bid_lottery_shares,
+    nii_outcome,
+    retail_applications,
+    retail_odds,
+    retail_winners,
+)
 from ipo_intel.engine.category import (
     MIN_BID_IS_NII,
     Category,
     application_amount,
     category_for,
     max_retail_lots,
+    min_nii_lots,
     nii_share,
 )
 from ipo_intel.engine.ev import GmpConfidence, expected_value, gmp_pct
@@ -101,6 +110,37 @@ def test_nii_proportionate():
     assert nii_outcome(1000, 100, 5).p_at_least_one_lot == 1.0  # 2 lots expected
     full = nii_outcome(1000, 100, 0.8)
     assert (full.expected_shares, full.p_at_least_one_lot) == (1000.0, 1.0)
+
+
+def test_minimum_nii_bid_in_lots():
+    # 150-share lots at ₹100: 14 lots (₹2,10,000) is the smallest sNII bid, 67 lots (₹10,05,000) the smallest bNII.
+    assert min_nii_lots(Category.SNII, 150, 100, 1, RULES) == 14
+    assert min_nii_lots(Category.BNII, 150, 100, 1, RULES) == 67
+    # An SME whose 2-lot minimum is already above ₹2 lakh: the minimum bid is the minimum NII bid.
+    assert min_nii_lots(Category.SNII, 800, 158, 2, RULES) == 2
+
+
+def test_sebi_2022_nii_is_a_lottery_for_the_minimum_bid():
+    # Heavily oversubscribed: a winner gets only the minimum bid.
+    low, high = min_bid_lottery_shares(5000, 1000, 10, 2.0)
+    assert (low, high) == (pytest.approx(100), pytest.approx(200))
+    # Not oversubscribed: allotted in full.
+    assert min_bid_lottery_shares(5000, 1000, 0.8, 2.0) == (5000, 5000)
+    # Lightly oversubscribed: at the high end everyone gets the minimum bid and the leftover
+    # (1/1.5 - 1/2) / (1 - 1/2) = 1/3 of the excess demand is shared proportionately.
+    low, high = min_bid_lottery_shares(3000, 1000, 1.5, 2.0)
+    assert low == pytest.approx(1000 / 1.5)
+    assert high == pytest.approx(1000 + 2000 / 3)
+    with pytest.raises(ValueError):
+        min_bid_lottery_shares(500, 1000, 2, 1.5)
+
+
+def test_sebi_2022_odds_sit_below_proportionate_for_big_bids():
+    # 14 lots of 150 at 50x: proportionate says 28% chance of a lot; the SEBI rule gives 2-3%.
+    proportionate = nii_outcome(14 * 150, 150, 50).p_at_least_one_lot
+    sebi = retail_odds(50, 1.5)
+    assert proportionate == pytest.approx(0.28)
+    assert sebi.low == pytest.approx(0.02) and sebi.high == pytest.approx(0.03)
 
 
 def test_nii_rejects_nonsense():

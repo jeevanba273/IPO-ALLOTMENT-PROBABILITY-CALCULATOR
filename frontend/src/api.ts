@@ -131,7 +131,8 @@ export interface Analysis {
   amount_rs: number;
   category: InvestorCategory;
   category_label: string;
-  method: "lottery" | "proportionate";
+  method: "lottery" | "proportionate" | "sebi_2022";
+  allotment_unit_lots: number;
   latest: DayFigures | null;
   base: DayFigures | null;
   projections: Record<string, Projection>;

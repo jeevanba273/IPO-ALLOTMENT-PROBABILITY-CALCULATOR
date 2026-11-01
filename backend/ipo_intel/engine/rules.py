@@ -58,8 +58,18 @@ class Retail(_Model):
     avg_min_bids_per_applicant: PerBoard
 
 
+class NiiPerSub(_Model):
+    snii: float = Field(ge=1)
+    bnii: float = Field(ge=1)
+
+
 class Nii(_Model):
-    method: Literal["proportionate"]
+    # 'proportionate': expected shares = applied / times.
+    # 'sebi_2022': SEBI's rule since April 2022: the minimum NII bid by lottery first,
+    # then any shares left over proportionately.
+    method: Literal["proportionate", "sebi_2022"]
+    # sebi_2022 only: average NII application, in minimum NII bids (sets the high end of the odds).
+    avg_min_bids_per_applicant: NiiPerSub = NiiPerSub(snii=1.5, bnii=3.0)
 
 
 class Ev(_Model):

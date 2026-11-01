@@ -120,7 +120,8 @@ message that names it.
 | `categories.snii_max_rs` | 1000000 | Above retail and up to this is small NII; above it, big NII |
 | `categories.nii_split` | 0.3333 / 0.6667 | sNII / bNII share of the NII reservation (must add up to 1) |
 | `retail.avg_min_bids_per_applicant` | mainboard 1.5, SME 1.0 | Average retail application in minimum bids. Retail odds run from 1/times (everyone bid the minimum) up to this / times |
-| `nii.method` | proportionate | Expected shares = applied / times; P(at least 1 lot) = min(1, expected lots) |
+| `nii.method` | proportionate | `proportionate`: expected shares = applied / times, P(at least 1 lot) = min(1, expected lots). `sebi_2022`: SEBI's rule since April 2022: the minimum NII bid (smallest lots above ₹2 lakh for sNII, above ₹10 lakh for bNII) by lottery, then leftover shares proportionately; the chance of any allotment is lower |
+| `nii.avg_min_bids_per_applicant` | sNII 1.5, bNII 3.0 | `sebi_2022` only: average NII application in minimum NII bids (the high end of the odds) |
 | `ev.gmp_multipliers` | 0.5, 0.75, 1.0 | Expected value is shown at these fractions of the GMP (GMP tends to run ahead of listings) |
 | `projection.min_samples` | 8 | Past listings needed before a final subscription is projected ("not enough history" below) |
 | `projection.min_base_times` | 0.05 | A day's subscription below this is too small to scale from |
@@ -165,7 +166,7 @@ own; these are for checking things.
 ## Development
 
 ```powershell
-cd backend; ..\.venv\Scripts\python -m pytest     # 344 tests; no network, a throwaway Postgres
+cd backend; ..\.venv\Scripts\python -m pytest     # 350 tests; no network, a throwaway Postgres
 cd frontend; npm run dev                           # Vite on :5173, proxying /api to :8000
 ```
 

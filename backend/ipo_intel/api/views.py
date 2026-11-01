@@ -205,7 +205,8 @@ def analysis_view(a: Analysis) -> dict:
         "amount_rs": a.amount_rs,
         "category": a.category.value,
         "category_label": a.category.label,
-        "method": "lottery" if a.category.value == "retail" else "proportionate",
+        "method": a.method,
+        "allotment_unit_lots": a.allotment_unit_lots,
         "latest": figures(a.latest),
         "base": figures(a.base),
         "projections": {

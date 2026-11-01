@@ -13,6 +13,7 @@ import psycopg
 
 from ipo_intel import queries
 from ipo_intel.analysis import (
+    METHOD_LABELS,
     Analysis,
     OddsResult,
     analyse,
@@ -594,8 +595,10 @@ def _cmd_odds(args: argparse.Namespace, settings: Settings) -> int:
                           f" min–max {_x_range(p.low, p.high):<20} {p.message}")
                 else:
                     print(f"    {name:<8} {p.message} ({p.samples} past IPOs)")
-    method = "lottery for the minimum bid" if a.category is Category.RETAIL else "proportionate"
-    print(f"  Your odds ({a.category.label}, {method})")
+    print(f"  Your odds ({a.category.label}, {METHOD_LABELS[a.method]})")
+    if a.method == "sebi_2022":
+        print(f"    the minimum NII bid here is {a.allotment_unit_lots} lots "
+              f"({_inr(a.allotment_unit_lots * a.lot_size * a.cutoff)})")
     for odds in (a.odds_now, a.odds_final):
         if odds is not None:
             for line in _odds_line(odds, a):

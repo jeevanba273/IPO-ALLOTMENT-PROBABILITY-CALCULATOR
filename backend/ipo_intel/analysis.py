@@ -12,8 +12,8 @@ from datetime import date, datetime
 
 from ipo_intel import queries
 from ipo_intel.db import Conn
-from ipo_intel.engine.allotment import any_of, nii_outcome, retail_odds
-from ipo_intel.engine.category import MIN_BID_IS_NII, Category, application_amount, category_for
+from ipo_intel.engine.allotment import any_of, min_bid_lottery_shares, nii_outcome, retail_odds
+from ipo_intel.engine.category import MIN_BID_IS_NII, Category, application_amount, category_for, min_nii_lots
 from ipo_intel.engine.ev import ExpectedValue, GmpConfidence, expected_value
 from ipo_intel.engine.gmp import GmpReading
 from ipo_intel.engine.projection import History, Projection, ProjectionStatus, multipliers, project
@@ -24,6 +24,11 @@ from ipo_intel.engine.rules import Rules
 from ipo_intel.lifecycle import Lifecycle, lifecycle_of, needs_final_detail
 
 SPLIT_ASSUMED = "IndianAPI reports one NII figure, so sNII and bNII are taken to be subscribed alike."
+METHOD_LABELS = {
+    "lottery": "lottery for the minimum bid",
+    "proportionate": "proportionate",
+    "sebi_2022": "SEBI 2022: the minimum NII bid by lottery, then the rest proportionately",
+}
 NO_SUBSCRIPTION_YET = "No subscription figures yet, so no odds."
 PARTIAL_DAY = "Today's figures are still coming in; the projection uses the last complete day."
 
@@ -67,6 +72,8 @@ class Analysis:
     applications: int
     amount_rs: float
     category: Category
+    method: str  # 'lottery' (retail), 'proportionate' or 'sebi_2022' (NII)
+    allotment_unit_lots: int  # what one winning application gets under a lottery, in lots
     latest: DayFigures | None
     base: DayFigures | None
     projections: dict[str, Projection] = field(default_factory=dict)
@@ -164,6 +171,7 @@ def _odds(
     lot_size: int,
     min_qty: int,
     applications: int,
+    unit_lots: int,
     rules: Rules,
 ) -> OddsResult:
     applied = lots * lot_size
@@ -174,6 +182,14 @@ def _odds(
         # Not oversubscribed: allotted in full. Oversubscribed: the lottery allots the minimum bid.
         shares_low = applied if times_high <= 1 else p_low * min_qty
         shares_high = applied if times_low <= 1 else p_high * min_qty
+    elif rules.nii.method == "sebi_2022":
+        per_sub = rules.nii.avg_min_bids_per_applicant
+        k = per_sub.snii if category is Category.SNII else per_sub.bnii
+        min_bid = unit_lots * lot_size
+        p_low = retail_odds(times_high, k).low
+        p_high = retail_odds(times_low, k).high
+        shares_low = min_bid_lottery_shares(applied, min_bid, times_high, k)[0]
+        shares_high = min_bid_lottery_shares(applied, min_bid, times_low, k)[1]
     else:
         worst = nii_outcome(applied, lot_size, times_high)
         best = nii_outcome(applied, lot_size, times_low)
@@ -230,8 +246,12 @@ def analyse(
     notes: list[str] = []
     if min_category is not Category.RETAIL:
         notes.append(MIN_BID_IS_NII)
-    if category is not Category.RETAIL:
+    if category is Category.RETAIL:
+        method, unit_lots = "lottery", min_lots
+    else:
         notes.append(SPLIT_ASSUMED)
+        method = rules.nii.method
+        unit_lots = min_nii_lots(category, lot_size, cutoff, min_lots, rules) if method == "sebi_2022" else 1
 
     overrides = reservation_overrides(conn, ipo_id)
     bidding_over = stage in (Lifecycle.CLOSED, Lifecycle.LISTED)
@@ -246,7 +266,10 @@ def analyse(
     if base is not None and latest is not None and base is not latest:
         notes.append(PARTIAL_DAY)
 
-    common = dict(board=board, lots=lots, lot_size=lot_size, min_qty=min_qty, applications=applications, rules=rules)
+    common = dict(
+        board=board, lots=lots, lot_size=lot_size, min_qty=min_qty, applications=applications,
+        unit_lots=unit_lots, rules=rules,
+    )
     projections: dict[str, Projection] = {}
     odds_now = odds_final = None
     if base is not None:
@@ -291,6 +314,8 @@ def analyse(
         applications=applications,
         amount_rs=amount,
         category=category,
+        method=method,
+        allotment_unit_lots=unit_lots,
         latest=latest,
         base=base,
         projections=projections,
