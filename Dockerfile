@@ -1,6 +1,6 @@
 # One image: the built dashboard plus the backend that serves it and runs every job.
 #   docker build -t ipo-intel .
-#   docker run -p 8000:8000 --env-file .env -e DASHBOARD_PASSWORD=... ipo-intel
+#   docker run -p 8000:8000 --env-file .env ipo-intel     (.env needs DASHBOARD_PASSWORD_HASH)
 
 # --- the dashboard ---------------------------------------------------------------------------
 FROM node:22-alpine AS web

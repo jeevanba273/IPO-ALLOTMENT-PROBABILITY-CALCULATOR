@@ -7,6 +7,8 @@ from fastapi.testclient import TestClient
 
 from ipo_intel.api.app import create_app
 from ipo_intel.cli import main
+from ipo_intel.config import ConfigError
+from ipo_intel.passwords import hash_password
 from ipo_intel.scheduler import SchedulerLock
 from tests.fakes import make_settings
 from tests.indianapi_world import World
@@ -50,7 +52,8 @@ def _basic(user, password):
 
 
 def test_sign_in_protects_everything_but_the_health_check(world, tmp_path, database, migrated_db_url):
-    settings = make_settings(indianapi_key="k", database_url=migrated_db_url, dashboard_password="s3cret-pass")
+    settings = make_settings(indianapi_key="k", database_url=migrated_db_url,
+                             dashboard_password_hash=hash_password("s3cret-pass"))
     app = create_app(settings, db=world.db, runner=world.runner, clock=world.clock,
                      start_scheduler=False, migrate=False, frontend_dist=tmp_path)
     with TestClient(app) as client:
@@ -61,9 +64,21 @@ def test_sign_in_protects_everything_but_the_health_check(world, tmp_path, datab
         assert client.get("/api/health", headers=_basic("someone", "s3cret-pass")).status_code == 401
         assert client.get("/api/health", headers={"Authorization": "Basic not-base64!"}).status_code == 401
         assert client.get("/api/health", headers=_basic("admin", "s3cret-pass")).status_code == 200
+        # A remembered sign-in lets only those exact credentials through.
+        assert client.get("/api/health", headers=_basic("admin", "s3cret-pass")).status_code == 200
+        assert client.get("/api/health", headers=_basic("admin", "s3cret-pas")).status_code == 401
         assert client.get("/healthz").json() == {"ok": True}
+
+
+def test_a_malformed_password_hash_stops_the_app_without_showing_it():
+    settings = make_settings(indianapi_key="k", database_url="postgresql://x/y",
+                             dashboard_password_hash="a-plain-text-password")
+    with pytest.raises(ConfigError) as caught:
+        create_app(settings, start_scheduler=False, migrate=False)
+    assert "DASHBOARD_PASSWORD_HASH" in str(caught.value)
+    assert "a-plain-text-password" not in str(caught.value)
 
 
 def test_serving_beyond_this_machine_needs_a_password(capsys):
     assert main(["serve", "--host", "0.0.0.0"], settings=make_settings(indianapi_key="k", database_url="postgresql://x/y")) == 2
-    assert "set DASHBOARD_PASSWORD" in capsys.readouterr().err
+    assert "set DASHBOARD_PASSWORD_HASH" in capsys.readouterr().err

@@ -98,7 +98,7 @@ Migrations run on startup.
 | `DATABASE_URL` | yes | Postgres URL. Locally `postgresql://postgres@127.0.0.1:54329/ipo_intel` |
 | `IPOALERTS_KEY` | for GMP | ipoalerts key (`x-api-key`) |
 | `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` | for alerts | See [Telegram alerts](#telegram-alerts) |
-| `DASHBOARD_PASSWORD` | when online | Sign-in (user `admin` unless `DASHBOARD_USER` is set). The app refuses to serve beyond this machine without it. |
+| `DASHBOARD_PASSWORD_HASH` | when online | Sign-in password as a salted scrypt hash, never the password itself: `ipo-intel hash-password` makes one. User `admin` unless `DASHBOARD_USER` is set. The app refuses to serve beyond this machine without it. |
 | `DASHBOARD_URL` | no | Public address, for links in alerts |
 | `IPOALERTS_DAILY_CAP`, `IPOALERTS_MONTHLY_CAP`, `IPOALERTS_BACKFILL_DAILY_CAP` | no | GMP budget (default 12 / 400 / 8; must stay below 25 / 750) |
 | `INDIANAPI_PAUSE_BACKFILL_BELOW`, `INDIANAPI_ESSENTIAL_ONLY_BELOW` | no | Quota thresholds (1000 / 300) |
@@ -136,15 +136,25 @@ IndianAPI with a "verify against the RHP" warning until you type the RHP figures
 
 ## Deploy to Railway
 
-The repo has a `Dockerfile` (it builds the dashboard and the backend into one image) and a
-`railway.json` (one replica, health check on `/healthz`).
+The Railway project **IPO INTELLIGENCE DASHBOARD** has two services in Singapore: `ipo-dashboard`,
+built from the `Dockerfile` (the dashboard and the backend in one image), and `Postgres`.
+`.railway/railway.ts` holds the app's settings (Dockerfile build, health check on `/healthz`, one
+replica). After changing it:
 
-1. Push the repo to GitHub, then in Railway: **New project → Deploy from GitHub repo**.
-2. **New → Database → PostgreSQL**. In the app service's **Variables**, add
-   `DATABASE_URL=${{Postgres.DATABASE_URL}}`.
-3. Add `INDIANAPI_KEY`, `IPOALERTS_KEY`, `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `DASHBOARD_PASSWORD`,
-   and the caps you want (`IPOALERTS_DAILY_CAP=20`, `IPOALERTS_MONTHLY_CAP=700`).
-4. **Settings → Networking → Generate domain**, then set `DASHBOARD_URL` to it.
+```powershell
+npm install                  # once: Railway's config SDK
+$env:_ = "$env:APPDATA\npm\node_modules\@railway\cli\bin\railway.exe"   # Windows only, see below
+railway config plan          # preview
+railway config apply --yes
+```
+
+On Windows the SDK's CLI version check cannot start the npm `railway` shim, so `$env:_` points it at the
+real binary.
+
+Variables stay on Railway, not in the file: `DATABASE_URL=${{Postgres.DATABASE_URL}}`, `PORT=8000`,
+`INDIANAPI_KEY`, `IPOALERTS_KEY`, `DASHBOARD_USER`, `DASHBOARD_PASSWORD_HASH`, `DASHBOARD_URL`, the caps
+(`IPOALERTS_DAILY_CAP=20`, `IPOALERTS_MONTHLY_CAP=700`), and `TELEGRAM_BOT_TOKEN` / `TELEGRAM_CHAT_ID`
+once Telegram is set up. Set one with `railway variable set KEY=value --service ipo-dashboard`.
 
 Once it runs online, **stop the local copy**. The API budgets belong to the keys, but each database
 keeps its own count, so two copies on two databases would spend each key twice as fast.
@@ -161,12 +171,12 @@ own; these are for checking things.
 | `gmp show/set/clear <id>`, `symbol set/clear`, `reservation show/set/clear` | GMP and manual fixes |
 | `jobs`, `runs`, `budget`, `multipliers`, `alerts preview` | What ran, API calls, GMP budget, projection history, due alerts |
 | `run <job>` | Run one job now (`gmp-*` jobs need `--spend-budget`) |
-| `telegram chats/test`, `localdb start/stop/status`, `migrate`, `config` | Setup |
+| `telegram chats/test`, `localdb start/stop/status`, `migrate`, `config`, `hash-password` | Setup |
 
 ## Development
 
 ```powershell
-cd backend; ..\.venv\Scripts\python -m pytest     # 350 tests; no network, a throwaway Postgres
+cd backend; ..\.venv\Scripts\python -m pytest     # 366 tests; no network, a throwaway Postgres
 cd frontend; npm run dev                           # Vite on :5173, proxying /api to :8000
 ```
 

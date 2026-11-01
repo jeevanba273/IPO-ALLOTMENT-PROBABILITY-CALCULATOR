@@ -135,7 +135,7 @@ def _price_band(row: dict) -> str:
 def _cmd_config(args: argparse.Namespace, settings: Settings) -> int:
     print("Secrets (values are never shown):")
     for env_var, is_set in settings.secret_status().items():
-        print(f"  {env_var:<22} {'set' if is_set else 'missing'}")
+        print(f"  {env_var:<24} {'set' if is_set else 'missing'}")
     print("Settings:")
     rows = [
         ("indianapi_base_url", settings.indianapi_base_url),
@@ -411,10 +411,10 @@ def _cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
     from ipo_intel.api.app import create_app
     from ipo_intel.devdb import local_url
 
-    if args.host not in _LOOPBACK and settings.dashboard_password is None:
+    if args.host not in _LOOPBACK and settings.dashboard_password_hash is None:
         print(
-            f"error: set DASHBOARD_PASSWORD before serving on {args.host}; without it anyone who can reach "
-            "this machine could open the dashboard",
+            f"error: set DASHBOARD_PASSWORD_HASH (from `ipo-intel hash-password`) before serving on {args.host}; "
+            "without it anyone who can reach this machine could open the dashboard",
             file=sys.stderr,
         )
         return 2
@@ -426,6 +426,26 @@ def _cmd_serve(args: argparse.Namespace, settings: Settings) -> int:
     if args.open:
         threading.Timer(2.5, webbrowser.open, args=[url]).start()
     uvicorn.run(create_app(settings), host=args.host, port=args.port, log_config=None, access_log=False)
+    return 0
+
+
+def _cmd_hash_password(args: argparse.Namespace, settings: Settings) -> int:
+    import getpass
+
+    from ipo_intel.passwords import hash_password
+
+    if sys.stdin.isatty():
+        password = getpass.getpass("Dashboard password: ")
+        if getpass.getpass("Again: ") != password:
+            print("error: the two passwords differ", file=sys.stderr)
+            return 2
+    else:
+        # Windows PowerShell puts a byte-order mark in front of what it pipes in.
+        password = sys.stdin.readline().rstrip("\r\n").removeprefix("﻿")
+    if not password:
+        print("error: the password cannot be empty", file=sys.stderr)
+        return 2
+    print(hash_password(password))
     return 0
 
 
@@ -734,7 +754,8 @@ def build_parser() -> argparse.ArgumentParser:
     run.add_argument("--spend-budget", action="store_true", help="allow a gmp-* job to spend ipoalerts calls now")
     add("scheduler", _cmd_scheduler, "run the IndianAPI jobs on their IST schedule until Ctrl+C")
     serve = add("serve", _cmd_serve, "run the dashboard and its schedule (http://127.0.0.1:8000)")
-    serve.add_argument("--host", default="127.0.0.1", help="0.0.0.0 to serve beyond this machine (needs DASHBOARD_PASSWORD)")
+    serve.add_argument("--host", default="127.0.0.1", help="0.0.0.0 to serve beyond this machine (needs DASHBOARD_PASSWORD_HASH)")
+    add("hash-password", _cmd_hash_password, "hash a dashboard password for DASHBOARD_PASSWORD_HASH (reads it from stdin)")
     serve.add_argument("--port", type=int, default=int(os.environ.get("PORT", "8000")), help="default: $PORT or 8000")
     serve.add_argument("--open", action="store_true", help="open the dashboard in the browser")
     telegram = add("telegram", _cmd_telegram, "Telegram setup: list the chats that messaged your bot, or send a test")

@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import base64
 import binascii
+import hashlib
 import hmac
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
@@ -19,14 +20,16 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.schedulers.base import BaseScheduler
 from fastapi import FastAPI, HTTPException, Request
 from fastapi.responses import FileResponse, HTMLResponse, Response
+from starlette.concurrency import run_in_threadpool
 
 from ipo_intel.budget import BudgetGuard
 from ipo_intel.clients.factory import build_ipoalerts_budget
-from ipo_intel.config import REPO_ROOT, Settings, get_settings, require
+from ipo_intel.config import REPO_ROOT, ConfigError, Settings, get_settings, require
 from ipo_intel.db import Database, connect
 from ipo_intel.engine.rules import Rules, cached_rules
 from ipo_intel.ingest.runner import JobRunner
 from ipo_intel.migrate import apply_migrations
+from ipo_intel.passwords import check_hash, verify_password
 from ipo_intel.scheduler import SchedulerLock, build_scheduler
 from ipo_intel.timeutil import IST, Clock, SystemClock
 
@@ -52,17 +55,37 @@ class Services:
     scheduler_elsewhere: bool = False
 
 
-def _authorized(header: str, user: str, password: str) -> bool:
-    scheme, _, value = header.partition(" ")
-    if scheme.lower() != "basic" or not value:
+class SignIn:
+    """HTTP Basic sign-in against a password hash.
+
+    Browsers resend the credentials with every request, so a header that has
+    passed once is remembered (as its SHA-256) and the slow hash is only paid on
+    the first request and on wrong passwords.
+    """
+
+    def __init__(self, user: str, password_hash: str) -> None:
+        self._user = user
+        self._hash = password_hash
+        self._accepted: set[bytes] = set()
+
+    def allows(self, header: str) -> bool:
+        digest = hashlib.sha256(header.encode()).digest()
+        if digest in self._accepted:
+            return True
+        scheme, _, value = header.partition(" ")
+        if scheme.lower() != "basic" or not value:
+            return False
+        try:
+            given_user, sep, given_password = base64.b64decode(value, validate=True).decode("utf-8").partition(":")
+        except (binascii.Error, UnicodeDecodeError, ValueError):
+            return False
+        user_ok = hmac.compare_digest(given_user.encode(), self._user.encode())
+        # Always hashed, so a wrong user name takes as long as a wrong password.
+        password_ok = verify_password(given_password, self._hash)
+        if sep and user_ok and password_ok:
+            self._accepted.add(digest)
+            return True
         return False
-    try:
-        given_user, sep, given_password = base64.b64decode(value, validate=True).decode("utf-8").partition(":")
-    except (binascii.Error, UnicodeDecodeError, ValueError):
-        return False
-    user_ok = hmac.compare_digest(given_user.encode(), user.encode())
-    password_ok = hmac.compare_digest(given_password.encode(), password.encode())
-    return bool(sep) and user_ok and password_ok
 
 
 def create_app(
@@ -122,13 +145,18 @@ def create_app(
 
     app = FastAPI(title="IPO Intelligence", lifespan=lifespan, docs_url="/api/docs", openapi_url="/api/openapi.json")
 
-    if settings.dashboard_password is not None:
-        password = settings.dashboard_password.get_secret_value()
+    if settings.dashboard_password_hash is not None:
+        password_hash = settings.dashboard_password_hash.get_secret_value()
+        try:
+            check_hash(password_hash)
+        except ValueError as exc:
+            raise ConfigError(f"DASHBOARD_PASSWORD_HASH: {exc}") from None
+        gate = SignIn(settings.dashboard_user, password_hash)
 
         @app.middleware("http")
         async def sign_in(request: Request, call_next):
-            if request.url.path == "/healthz" or _authorized(
-                request.headers.get("authorization", ""), settings.dashboard_user, password
+            if request.url.path == "/healthz" or await run_in_threadpool(
+                gate.allows, request.headers.get("authorization", "")
             ):
                 return await call_next(request)
             return Response(
