@@ -1,0 +1,164 @@
+{
+  "status": "success",
+  "data": {
+    "basic": {
+      "id": "bls-polymers-limited-ipo",
+      "name": "BLS Polymers",
+      "symbol": "BLSPOLY",
+      "status": "closed",
+      "type": "Mainboard",
+      "industry": "Petrochemicals"
+    },
+    "pricing": {
+      "priceRange": {
+        "min": 142.0,
+        "max": 150.0,
+        "cutOff": 150.0
+      },
+      "faceValue": 10.0
+    },
+    "issue": {
+      "size": 255.0,
+      "sizeFormatted": "₹255.0 Cr",
+      "lotSize": 100,
+      "minimumQuantity": 100.0,
+      "minimumInvestment": "₹15,000.00"
+    },
+    "dates": {
+      "bidding": {
+        "start": "2026-10-27",
+        "end": "2026-10-29"
+      },
+      "listing": "2026-11-03",
+      "allotment": "2026-11-02"
+    },
+    "timeline": {
+      "preApplicationStart": "2026-10-23",
+      "biddingStart": "2026-10-27",
+      "biddingEnd": "2026-10-29",
+      "allotmentProcessStart": "2026-10-30",
+      "refundInitiation": "2026-11-02",
+      "allotmentFinalization": "2026-11-02",
+      "listingDay": "2026-11-03",
+      "mandateEnd": "2026-12-10"
+    },
+    "exchanges": {
+      "primary": "BSE,NSE",
+      "nse": true,
+      "bse": true
+    },
+    "reservation": {
+      "retail": 5950000,
+      "nonInstitutional": 2550000,
+      "qualifiedInstitutional": 3400000
+    },
+    "subscription": {
+      "overall": "239.02",
+      "overallFormatted": "239.02x",
+      "daily": [
+        {
+          "date": "29-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "740759300",
+              "reserved": "5950000",
+              "times": "124.5",
+              "timesFormatted": "124.50x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "441695400",
+              "reserved": "3400000",
+              "times": "129.91",
+              "timesFormatted": "129.91x"
+            },
+            "nonInstitutional": {
+              "applied": "1414157400",
+              "reserved": "2550000",
+              "times": "554.57",
+              "timesFormatted": "554.57x"
+            },
+            "overall": {
+              "applied": "2844360100",
+              "reserved": "11900000",
+              "times": "239.02",
+              "timesFormatted": "239.02x"
+            }
+          }
+        },
+        {
+          "date": "28-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "112679900",
+              "reserved": "5950000",
+              "times": "18.94",
+              "timesFormatted": "18.94x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "12920200",
+              "reserved": "3400000",
+              "times": "3.8",
+              "timesFormatted": "3.80x"
+            },
+            "nonInstitutional": {
+              "applied": "131162500",
+              "reserved": "2550000",
+              "times": "51.44",
+              "timesFormatted": "51.44x"
+            },
+            "overall": {
+              "applied": "256762600",
+              "reserved": "11900000",
+              "times": "21.58",
+              "timesFormatted": "21.58x"
+            }
+          }
+        },
+        {
+          "date": "27-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "25991000",
+              "reserved": "5950000",
+              "times": "4.37",
+              "timesFormatted": "4.37x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "12603700",
+              "reserved": "3400000",
+              "times": "3.71",
+              "timesFormatted": "3.71x"
+            },
+            "nonInstitutional": {
+              "applied": "21701200",
+              "reserved": "2550000",
+              "times": "8.51",
+              "timesFormatted": "8.51x"
+            },
+            "overall": {
+              "applied": "60295900",
+              "reserved": "11900000",
+              "times": "5.07",
+              "timesFormatted": "5.07x"
+            }
+          }
+        }
+      ]
+    },
+    "links": {
+      "prospectus": {
+        "rhp": "https://example.invalid/redacted.pdf?X-Amz-Signature=REDACTED"
+      },
+      "allotment": "https://ipostatus.kfintech.com/"
+    },
+    "registrar": {
+      "name": "KFin Technologies Limited",
+      "contact": {
+        "person": "REDACTED",
+        "email": "redacted@example.invalid",
+        "phone": "REDACTED"
+      },
+      "website": "https://www.kfintech.com/"
+    }
+  }
+}

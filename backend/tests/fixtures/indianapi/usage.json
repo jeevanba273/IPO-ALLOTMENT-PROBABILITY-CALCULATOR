@@ -1,0 +1,6 @@
+{
+  "total_requests": 1250,
+  "hard_limit": 10000,
+  "remaining_requests": 8750,
+  "endpoint_usage": {"/stock": 500, "/trending": 200, "/news": 150, "/indices": 400}
+}

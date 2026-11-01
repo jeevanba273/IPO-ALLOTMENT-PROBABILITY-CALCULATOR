@@ -1,0 +1,72 @@
+{
+  "summary": {
+    "count": 3,
+    "mainboardCount": 3,
+    "smeCount": 0
+  },
+  "ipos": [
+    {
+      "id": "meridian-power",
+      "name": "Meridian Power Ltd",
+      "status": "upcoming",
+      "issueType": "Mainboard",
+      "industry": "Power",
+      "symbol": "",
+      "isin": "INE0MER01011",
+      "minimumPrice": 210,
+      "maximumPrice": 222,
+      "cutOffPrice": 222,
+      "faceValue": 10,
+      "issueSize": 1500.0,
+      "sizeFormatted": "₹1,500 Cr",
+      "lotSize": 67,
+      "minimumQuantity": 67,
+      "minimumInvestment": "₹14,874",
+      "biddingStartDate": "2026-11-10",
+      "biddingEndDate": "2026-11-12",
+      "timeline": {
+        "preApplyStartDate": "2026-11-06",
+        "applicationStartDate": "2026-11-10",
+        "applicationEndDate": "2026-11-12",
+        "allotmentStartDate": "2026-11-13",
+        "allotmentDate": "2026-11-13",
+        "listingDate": "2026-11-17"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    },
+    {
+      "id": "quietpeak-retail",
+      "name": "Quietpeak Retail Limited",
+      "status": "upcoming",
+      "issueType": "Mainboard",
+      "symbol": "",
+      "minimumPrice": 0,
+      "maximumPrice": 0,
+      "cutOffPrice": 0,
+      "lotSize": 0,
+      "minimumQuantity": 0,
+      "biddingStartDate": null,
+      "biddingEndDate": null,
+      "timeline": {
+        "preApplyStartDate": "2026-09-01"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    },
+    {
+      "id": "badband-tech",
+      "name": "Badband Tech Ltd",
+      "status": "upcoming",
+      "issueType": "Mainboard",
+      "minimumPrice": 120,
+      "maximumPrice": 110,
+      "lotSize": 125,
+      "biddingStartDate": "2026-11-20",
+      "biddingEndDate": "2026-11-24",
+      "timeline": {},
+      "rhpUrl": null,
+      "drhpUrl": null
+    }
+  ]
+}

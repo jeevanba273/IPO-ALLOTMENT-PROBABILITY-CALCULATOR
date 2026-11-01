@@ -1,0 +1,87 @@
+{
+  "summary": {
+    "count": 4,
+    "mainboardCount": 3,
+    "smeCount": 1
+  },
+  "ipos": [
+    {
+      "id": "northstar-optics",
+      "name": "Northstar Optics Limited",
+      "status": "listed",
+      "issueType": "Mainboard",
+      "industry": "Optical Equipment",
+      "symbol": "",
+      "minimumPrice": 238,
+      "maximumPrice": 250,
+      "cutOffPrice": 250,
+      "faceValue": 10,
+      "issueSize": 850.0,
+      "lotSize": 60,
+      "minimumQuantity": 60,
+      "biddingStartDate": "2026-10-14",
+      "biddingEndDate": "2026-10-16",
+      "timeline": {
+        "listingDate": "2026-10-21"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    },
+    {
+      "id": "kesar-spices",
+      "name": "Kesar Spices Ltd",
+      "status": "listed",
+      "issueType": "SME",
+      "symbol": "",
+      "minimumPrice": 114,
+      "maximumPrice": 120,
+      "cutOffPrice": 120,
+      "issueSize": 18.5,
+      "lotSize": 1200,
+      "minimumQuantity": 2400,
+      "biddingStartDate": "2026-10-13",
+      "biddingEndDate": "2026-10-15",
+      "timeline": {
+        "listingDate": "2026-10-20"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    },
+    {
+      "id": "flatline-industries",
+      "name": "Flatline Industries Ltd",
+      "status": "listed",
+      "issueType": "Mainboard",
+      "minimumPrice": 142,
+      "maximumPrice": 150,
+      "cutOffPrice": 150,
+      "lotSize": 100,
+      "minimumQuantity": 100,
+      "biddingStartDate": "2026-10-07",
+      "biddingEndDate": "2026-10-09",
+      "timeline": {
+        "listingDate": "2026-10-14"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    },
+    {
+      "id": "dropcap-engineering",
+      "name": "Dropcap Engineering Limited",
+      "status": "listed",
+      "issueType": "Mainboard",
+      "minimumPrice": 380,
+      "maximumPrice": 400,
+      "cutOffPrice": 400,
+      "lotSize": 37,
+      "minimumQuantity": 37,
+      "biddingStartDate": "2026-10-06",
+      "biddingEndDate": "2026-10-08",
+      "timeline": {
+        "listingDate": "2026-10-13"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    }
+  ]
+}

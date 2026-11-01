@@ -1,0 +1,135 @@
+{
+  "status": "success",
+  "data": {
+    "basic": {
+      "id": "acme-tech",
+      "name": "Acme Tech Ltd",
+      "symbol": "ACMETECH",
+      "status": "open",
+      "type": "Mainboard",
+      "industry": "Software"
+    },
+    "pricing": {
+      "priceRange": {
+        "min": 95,
+        "max": 100,
+        "cutOff": 100
+      },
+      "faceValue": 2
+    },
+    "issue": {
+      "size": 1200.0,
+      "sizeFormatted": "₹1,200 Cr",
+      "lotSize": 150,
+      "minimumQuantity": 150,
+      "minimumInvestment": "₹15,000"
+    },
+    "dates": {
+      "bidding": {
+        "start": "2026-11-02",
+        "end": "2026-11-04"
+      },
+      "allotment": "2026-11-05",
+      "listing": "2026-11-09"
+    },
+    "timeline": {
+      "preApplicationStart": "2026-10-30",
+      "biddingStart": "2026-11-02",
+      "biddingEnd": "2026-11-04",
+      "allotmentProcessStart": "2026-11-05",
+      "allotmentFinalization": "2026-11-05",
+      "refundInitiation": "2026-11-06",
+      "mandateEnd": "2026-11-06",
+      "listingDay": "2026-11-09"
+    },
+    "reservation": {
+      "retail": 4200000,
+      "nonInstitutional": 1800000,
+      "qualifiedInstitutional": 6000000
+    },
+    "subscription": {
+      "overall": "0.94",
+      "overallFormatted": "0.94x",
+      "daily": [
+        {
+          "date": "03-11-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "6090000",
+              "reserved": "4200000",
+              "times": "1.45",
+              "timesFormatted": "1.45x"
+            },
+            "nonInstitutional": {
+              "applied": "2160000",
+              "reserved": "1800000",
+              "times": "1.20",
+              "timesFormatted": "1.20x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "3000000",
+              "reserved": "6000000",
+              "times": "0.50",
+              "timesFormatted": "0.50x"
+            },
+            "overall": {
+              "applied": "11250000",
+              "reserved": "12000000",
+              "times": "0.94",
+              "timesFormatted": "0.94x"
+            }
+          }
+        },
+        {
+          "date": "02-11-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "2940000",
+              "reserved": "4200000",
+              "times": "0.70",
+              "timesFormatted": "0.70x"
+            },
+            "nonInstitutional": {
+              "applied": "540000",
+              "reserved": "1800000",
+              "times": "0.30",
+              "timesFormatted": "0.30x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "60000",
+              "reserved": "6000000",
+              "times": "0.01",
+              "timesFormatted": "0.01x"
+            },
+            "overall": {
+              "applied": "3540000",
+              "reserved": "12000000",
+              "times": "0.295",
+              "timesFormatted": "0.30x"
+            }
+          }
+        }
+      ]
+    },
+    "registrar": {
+      "name": "KFin Technologies Ltd",
+      "website": "https://www.kfintech.example",
+      "contact": {
+        "person": "Jane Placeholder",
+        "email": "einward.placeholder@example.com",
+        "phone": "+91-40-0000-0000"
+      }
+    },
+    "exchanges": {
+      "primary": "NSE"
+    },
+    "performance": null,
+    "links": {
+      "prospectus": {
+        "rhp": "https://files.example.com/acme/rhp.pdf?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Expires=3600&X-Amz-Signature=abc123",
+        "drhp": "https://files.example.com/acme/drhp.pdf?X-Amz-Signature=def456"
+      },
+      "allotment": "https://ipostatus.kfintech.example/"
+    }
+  }
+}

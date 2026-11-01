@@ -1,0 +1,106 @@
+{
+  "status": "success",
+  "data": {
+    "basic": {
+      "id": "maxwell-engineering-solutions-limited-ipo",
+      "name": "Maxwell Engineering Solutions",
+      "symbol": "MAXENGS",
+      "status": "open",
+      "type": "SME",
+      "industry": "Engineering"
+    },
+    "pricing": {
+      "priceRange": {
+        "min": 150.0,
+        "max": 158.0,
+        "cutOff": 158.0
+      },
+      "faceValue": 10.0
+    },
+    "issue": {
+      "size": 58.0,
+      "sizeFormatted": "₹58.0 Cr",
+      "lotSize": 800,
+      "minimumQuantity": 1600.0,
+      "minimumInvestment": "₹252,800.00"
+    },
+    "dates": {
+      "bidding": {
+        "start": "2026-10-30",
+        "end": "2026-11-03"
+      },
+      "listing": "2026-11-06",
+      "allotment": "2026-11-05"
+    },
+    "timeline": {
+      "preApplicationStart": "2026-10-29",
+      "biddingStart": "2026-10-30",
+      "biddingEnd": "2026-11-03",
+      "allotmentProcessStart": "2026-11-04",
+      "refundInitiation": "2026-11-05",
+      "allotmentFinalization": "2026-11-05",
+      "listingDay": "2026-11-06",
+      "mandateEnd": "2026-12-15"
+    },
+    "exchanges": {
+      "primary": "NSE",
+      "nse": true,
+      "bse": false
+    },
+    "reservation": {
+      "retail": 1200000,
+      "nonInstitutional": 518400,
+      "qualifiedInstitutional": 683200
+    },
+    "subscription": {
+      "overall": "4.65",
+      "overallFormatted": "4.65x",
+      "daily": [
+        {
+          "date": "30-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "8920000",
+              "reserved": "1200000",
+              "times": "7.43",
+              "timesFormatted": "7.43x"
+            },
+            "qualifiedInstitutional": {
+              "applied": "0",
+              "reserved": "683200",
+              "times": "0.0",
+              "timesFormatted": "0.00x"
+            },
+            "nonInstitutional": {
+              "applied": "2252000",
+              "reserved": "518400",
+              "times": "4.34",
+              "timesFormatted": "4.34x"
+            },
+            "overall": {
+              "applied": "11172000",
+              "reserved": "2401600",
+              "times": "4.65",
+              "timesFormatted": "4.65x"
+            }
+          }
+        }
+      ]
+    },
+    "links": {
+      "prospectus": {
+        "rhp": "https://example.invalid/redacted.pdf?X-Amz-Signature=REDACTED"
+      },
+      "allotment": "https://ipostatus.kfintech.com/"
+    },
+    "registrar": {
+      "name": "KFIN TECHNOLOGIES LIMITED",
+      "contact": {
+        "person": "REDACTED",
+        "email": "redacted@example.invalid",
+        "phone": "REDACTED"
+      },
+      "website": "https://www.kfintech.com/"
+    }
+  }
+}

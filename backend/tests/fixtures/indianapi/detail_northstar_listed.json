@@ -1,0 +1,146 @@
+{
+  "status": "success",
+  "data": {
+    "basic": {
+      "id": "northstar-optics",
+      "name": "Northstar Optics Limited",
+      "symbol": "NORTHSTAR",
+      "status": "listed",
+      "type": "Mainboard",
+      "industry": "Optical Equipment"
+    },
+    "pricing": {
+      "priceRange": {
+        "min": 238,
+        "max": 250,
+        "cutOff": 250
+      },
+      "faceValue": 10
+    },
+    "issue": {
+      "size": 850.0,
+      "lotSize": 60,
+      "minimumQuantity": 60
+    },
+    "timeline": {
+      "biddingStart": "2026-10-14",
+      "biddingEnd": "2026-10-16",
+      "allotmentFinalization": "2026-10-17",
+      "listingDay": "2026-10-21"
+    },
+    "reservation": {
+      "retail": 2100000,
+      "nonInstitutional": 900000,
+      "qualifiedInstitutional": 3000000
+    },
+    "subscription": {
+      "overall": "28.91",
+      "daily": [
+        {
+          "date": "16-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "17640000",
+              "reserved": "2100000",
+              "times": "8.40"
+            },
+            "nonInstitutional": {
+              "applied": "19890000",
+              "reserved": "900000",
+              "times": "22.10"
+            },
+            "qualifiedInstitutional": {
+              "applied": "135900000",
+              "reserved": "3000000",
+              "times": "45.30"
+            },
+            "overall": {
+              "applied": "173430000",
+              "reserved": "6000000",
+              "times": "28.91"
+            }
+          }
+        },
+        {
+          "date": "",
+          "categories": {}
+        },
+        {
+          "date": "15-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "6300000",
+              "reserved": "2100000",
+              "times": "3.00"
+            },
+            "nonInstitutional": {
+              "applied": "4500000",
+              "reserved": "900000",
+              "times": "5.00"
+            },
+            "qualifiedInstitutional": {
+              "applied": "2400000",
+              "reserved": "3000000",
+              "times": "0.80"
+            },
+            "overall": {
+              "applied": "13200000",
+              "reserved": "6000000",
+              "times": "2.20"
+            }
+          }
+        },
+        {
+          "date": "14-10-2026",
+          "categories": {
+            "retailIndividual": {
+              "applied": "1890000",
+              "reserved": "2100000",
+              "times": "0.90"
+            },
+            "nonInstitutional": {
+              "applied": "540000",
+              "reserved": "900000"
+            },
+            "qualifiedInstitutional": {
+              "applied": "600000",
+              "reserved": "3000000",
+              "times": "0.20"
+            },
+            "overall": {
+              "applied": "3030000",
+              "reserved": "6000000",
+              "times": "0.51"
+            }
+          }
+        }
+      ]
+    },
+    "registrar": {
+      "name": "Link Intime India Pvt Ltd",
+      "contact": {
+        "person": null,
+        "email": "ipo.placeholder@example.com",
+        "phone": null
+      }
+    },
+    "performance": {
+      "price": {
+        "ipo": 250,
+        "listing": 330,
+        "current": 342.5
+      },
+      "gain": {
+        "absolute": 80,
+        "percentage": 32.0,
+        "formatted": "+32.00%"
+      }
+    },
+    "links": {
+      "prospectus": {
+        "rhp": "https://files.example.com/northstar/rhp.pdf?Expires=1790000000&Signature=zzz"
+      },
+      "allotment": "https://linkintime.example/ipo-allotment?id=northstar&sig=signedvalue"
+    }
+  }
+}

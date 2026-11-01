@@ -1,0 +1,64 @@
+{
+  "summary": {
+    "count": 2,
+    "mainboardCount": 1,
+    "smeCount": 1
+  },
+  "ipos": [
+    {
+      "id": "acme-tech",
+      "name": "Acme Tech Ltd",
+      "status": "active",
+      "issueType": "Mainboard",
+      "industry": "Software",
+      "symbol": "ACMETECH",
+      "isin": "INE0ACM01015",
+      "minimumPrice": 95,
+      "maximumPrice": 100,
+      "cutOffPrice": 100,
+      "faceValue": 2,
+      "issueSize": 1200.0,
+      "lotSize": 150,
+      "minimumQuantity": 150,
+      "biddingStartDate": "2026-11-02T00:00:00.000",
+      "biddingEndDate": "2026-11-04T00:00:00.000",
+      "timeline": {
+        "preApplyStartDate": "2026-10-30",
+        "applicationStartDate": "2026-11-02",
+        "applicationEndDate": "2026-11-04",
+        "allotmentStartDate": "2026-11-05",
+        "allotmentDate": "2026-11-05",
+        "listingDate": "2026-11-09"
+      },
+      "rhpUrl": "https://files.example.com/acme/rhp.pdf?X-Amz-Signature=abc123",
+      "drhpUrl": null,
+      "allotmentLinkUrl": "https://ipostatus.kfintech.example/",
+      "totalSubscription": "0.94"
+    },
+    {
+      "id": "sunrise-agro",
+      "name": "Sunrise Agro Foods Limited",
+      "status": "active",
+      "issueType": "SME",
+      "industry": "Agro Products",
+      "symbol": "",
+      "minimumPrice": 72,
+      "maximumPrice": 76,
+      "cutOffPrice": 0,
+      "faceValue": 10,
+      "issueSize": 24.32,
+      "lotSize": 1600,
+      "minimumQuantity": 3200,
+      "biddingStartDate": "2026-11-03",
+      "biddingEndDate": "2026-11-05",
+      "timeline": {
+        "applicationStartDate": "2026-11-03",
+        "applicationEndDate": "2026-11-05",
+        "allotmentDate": "2026-11-06",
+        "listingDate": "2026-11-10"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    }
+  ]
+}

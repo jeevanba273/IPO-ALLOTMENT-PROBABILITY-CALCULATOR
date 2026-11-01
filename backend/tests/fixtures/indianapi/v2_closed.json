@@ -1,0 +1,34 @@
+{
+  "summary": {
+    "count": 1,
+    "mainboardCount": 1,
+    "smeCount": 0
+  },
+  "ipos": [
+    {
+      "id": "bluewave-logistics",
+      "name": "Bluewave Logistics Ltd",
+      "status": "closed",
+      "issueType": "Mainboard",
+      "industry": "Logistics",
+      "symbol": "",
+      "minimumPrice": 180,
+      "maximumPrice": 190,
+      "cutOffPrice": 190,
+      "faceValue": 5,
+      "issueSize": 640.0,
+      "lotSize": 78,
+      "minimumQuantity": 78,
+      "biddingStartDate": "2026-10-29",
+      "biddingEndDate": "2026-11-02",
+      "timeline": {
+        "applicationStartDate": "2026-10-29",
+        "applicationEndDate": "2026-11-02",
+        "allotmentDate": "2026-11-03",
+        "listingDate": "2026-11-05"
+      },
+      "rhpUrl": null,
+      "drhpUrl": null
+    }
+  ]
+}

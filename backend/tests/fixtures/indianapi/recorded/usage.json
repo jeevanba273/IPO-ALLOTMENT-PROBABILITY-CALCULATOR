@@ -1,0 +1,10 @@
+{
+  "total_requests": 220,
+  "hard_limit": 10000,
+  "remaining_requests": 9780,
+  "endpoint_usage": {
+    "/ipo/{id}": 47,
+    "/ipo/v2": 41,
+    "/ipo": 7
+  }
+}

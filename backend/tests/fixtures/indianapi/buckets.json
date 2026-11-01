@@ -1,0 +1,116 @@
+{
+  "pre_apply": [],
+  "active": [
+    {
+      "symbol": "ACMETECH",
+      "name": "Acme Technologies",
+      "status": "open",
+      "is_sme": false,
+      "min_price": 95,
+      "max_price": 100,
+      "issue_price": null,
+      "listing_gains": null,
+      "listing_price": null,
+      "bidding_start_date": "2026-11-02",
+      "bidding_end_date": "2026-11-04",
+      "listing_date": "2026-11-09",
+      "lot_size": 150,
+      "document_url": "https://www.sebi.gov.in/filings/acme.pdf"
+    },
+    {
+      "symbol": "SUNRISE",
+      "name": "Sunrise Agro",
+      "status": "open",
+      "is_sme": true,
+      "min_price": 72,
+      "max_price": 76,
+      "listing_price": null,
+      "listing_gains": null,
+      "bidding_start_date": "2026-11-03",
+      "lot_size": 1600
+    }
+  ],
+  "upcoming": [
+    {
+      "symbol": "FABINDIA",
+      "name": "FabIndia",
+      "status": "upcoming",
+      "is_sme": false,
+      "additional_text": "Bidding dates yet to be announced",
+      "document_url": "https://www.sebi.gov.in/..."
+    }
+  ],
+  "closed": [
+    {
+      "symbol": "BLUEWAVE",
+      "name": "Bluewave Logistics Limited",
+      "status": "closed",
+      "is_sme": false,
+      "listing_price": null
+    }
+  ],
+  "listed": [
+    {
+      "symbol": "NORTHSTAR",
+      "name": "Northstar Optics Ltd.",
+      "status": "listed",
+      "is_sme": false,
+      "issue_price": 250,
+      "listing_price": 310,
+      "listing_gains": 24.000000000000004,
+      "listing_date": "2026-10-21",
+      "lot_size": 60
+    },
+    {
+      "symbol": "KESAR",
+      "name": "Kesar Spices",
+      "status": "listed",
+      "is_sme": "true",
+      "issue_price": "120",
+      "listing_price": "228.00",
+      "listing_gains": null,
+      "listing_date": "2026-10-20",
+      "lot_size": 1200
+    },
+    {
+      "symbol": "FLATLINE",
+      "name": "Flatline Industries Limited",
+      "status": "listed",
+      "is_sme": false,
+      "issue_price": 150,
+      "listing_price": 150,
+      "listing_gains": 0,
+      "listing_date": "2026-10-14"
+    },
+    {
+      "symbol": "DROPCAP",
+      "name": "DropCap Engineering Ltd",
+      "status": "listed",
+      "is_sme": false,
+      "issue_price": 400,
+      "listing_price": 320,
+      "listing_gains": -19.999999999999993,
+      "listing_date": "2026-10-13",
+      "additional_text": "Listed at 320 for 20.00% loss"
+    },
+    {
+      "symbol": "GHOST",
+      "name": "Ghost Holdings Ltd",
+      "status": "listed",
+      "is_sme": false,
+      "issue_price": 50,
+      "listing_price": 55,
+      "listing_gains": 10.0,
+      "listing_date": "2026-10-01"
+    },
+    {
+      "symbol": "NULLP",
+      "name": "Nullprice Ltd",
+      "status": "listed",
+      "is_sme": false,
+      "listing_price": null,
+      "listing_gains": null
+    },
+    "..."
+  ]
+}

@@ -1,0 +1,42 @@
+# rules_v1.yaml: the assumptions behind the allotment probability engine.
+#
+# Edit a number, save, and the next command or app restart uses it. Every value
+# is checked when the file loads; a bad one stops the app with a message that
+# names it. Amounts are rupees, quantities are shares.
+
+version: 1
+
+categories:
+  # An individual application up to this amount is retail (RII).
+  retail_max_rs: 200000
+  # Above retail_max_rs is NII: small NII (sNII) up to this amount, big NII (bNII) above it.
+  snii_max_rs: 1000000
+  # How the NII reservation is split between sNII and bNII. Must add up to 1.
+  nii_split:
+    snii: 0.3333
+    bnii: 0.6667
+
+retail:
+  # Average retail application size, in minimum bids (1 lot on mainboard, usually
+  # 2 lots on SME). The chance of an allotment lies between 1/times (everyone bid
+  # the minimum) and this number / times.
+  avg_min_bids_per_applicant:
+    mainboard: 1.5
+    sme: 1.0
+
+nii:
+  # proportionate: expected shares = shares applied / times subscribed, and
+  # P(at least one lot) = min(1, expected lots).
+  method: proportionate
+
+ev:
+  # GMP usually overstates the listing gain, so expected value is shown at these
+  # fractions of the GMP. Ascending, each above 0 and at most 2.
+  gmp_multipliers: [0.5, 0.75, 1.0]
+
+projection:
+  # Listed IPOs needed (same board, category and bidding day) before a final
+  # subscription is projected; with fewer the app says "not enough history".
+  min_samples: 8
+  # A day's subscription below this is too small to scale from.
+  min_base_times: 0.05
