@@ -1,5 +1,7 @@
 """One schedule per database, sign-in for the dashboard, and no unprotected public serving."""
 
+import time
+
 import pytest
 from fastapi.testclient import TestClient
 
@@ -32,15 +34,31 @@ def world(database, migrated_db_url):
     w.close()
 
 
-def test_a_second_copy_serves_the_dashboard_but_leaves_the_schedule_alone(world, tmp_path):
+class IdleRunner:
+    """Stands in for the job runner so a schedule can start without any job touching the test data."""
+
+    def run(self, *args, **kwargs):
+        pass
+
+
+def test_a_second_copy_serves_the_dashboard_and_takes_the_schedule_over_when_the_first_stops(world, tmp_path):
     holder = SchedulerLock(world.settings.database_url.get_secret_value())
     assert holder.acquire()
     try:
-        app = create_app(world.settings, db=world.db, runner=world.runner, clock=world.clock,
-                         migrate=False, frontend_dist=tmp_path)
+        app = create_app(world.settings, db=world.db, runner=IdleRunner(), clock=world.clock,
+                         migrate=False, frontend_dist=tmp_path, lock_retry_seconds=0.05)
         with TestClient(app) as client:
             health = client.get("/api/health").json()
-        assert health["scheduler_running"] is False and health["scheduler_elsewhere"] is True
+            assert health["scheduler_running"] is False and health["scheduler_elsewhere"] is True
+            time.sleep(0.3)  # a few retries while the first copy still holds the lock
+            assert client.get("/api/health").json()["scheduler_elsewhere"] is True
+            holder.release()  # the first copy stops, as the old one does at the end of a deploy
+            deadline = time.monotonic() + 10
+            while time.monotonic() < deadline and not health["scheduler_running"]:
+                time.sleep(0.05)
+                health = client.get("/api/health").json()
+            assert health["scheduler_running"] is True and health["scheduler_elsewhere"] is False
+            assert not holder.acquire()  # this copy holds the lock now
     finally:
         holder.release()
 

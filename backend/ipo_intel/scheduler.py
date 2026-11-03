@@ -16,12 +16,12 @@ Telegram:
 
 Only one process may run the schedule against a database: SchedulerLock holds a
 Postgres advisory lock for as long as the schedule runs. A second copy of the
-app still serves the dashboard but leaves the jobs to the first.
+app still serves the dashboard but leaves the jobs to the first, and takes them
+over once the first lets go (as the old copy does at the end of a deploy).
 """
 
 from __future__ import annotations
 
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 
@@ -34,8 +34,6 @@ from apscheduler.triggers.cron import CronTrigger
 
 from ipo_intel.ingest.runner import JobRunner
 from ipo_intel.timeutil import IST, utc_now
-
-log = logging.getLogger(__name__)
 
 JOB_DEFAULTS = {"coalesce": True, "max_instances": 1, "misfire_grace_time": 900}
 # Key of the session-level advisory lock that marks the one schedule runner.
@@ -120,7 +118,6 @@ class SchedulerLock:
             self._conn = conn
         else:
             conn.close()
-            log.warning("another copy of the app is running the schedule; this one only serves the dashboard")
         return bool(got)
 
     @property

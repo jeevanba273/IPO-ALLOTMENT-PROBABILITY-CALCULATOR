@@ -7,11 +7,14 @@ does here calls ipoalerts; GMP is only fetched by the schedule.
 
 from __future__ import annotations
 
+import logging
+import threading
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
 from dataclasses import dataclass
 from pathlib import Path
 
+import psycopg
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.schedulers.base import BaseScheduler
 from fastapi import FastAPI, HTTPException
@@ -29,7 +32,11 @@ from ipo_intel.passwords import check_hash
 from ipo_intel.scheduler import SchedulerLock, build_scheduler
 from ipo_intel.timeutil import IST, Clock, SystemClock
 
+log = logging.getLogger(__name__)
+
 FRONTEND_DIST = REPO_ROOT / "frontend" / "dist"
+# How often a copy that found the schedule taken checks whether it has been let go.
+LOCK_RETRY_SECONDS = 30.0
 
 _NOT_BUILT = """<!doctype html><meta charset="utf-8"><title>IPO Intelligence</title>
 <body style="font-family:system-ui;background:#0e131c;color:#e7eaf1;padding:3rem">
@@ -51,6 +58,27 @@ class Services:
     scheduler_elsewhere: bool = False
 
 
+def _start_schedule(runner: JobRunner) -> BaseScheduler:
+    scheduler = build_scheduler(runner, BackgroundScheduler(timezone=IST))
+    scheduler.start()
+    return scheduler
+
+
+def _take_over_when_free(lock: SchedulerLock, services: Services, stop: threading.Event, every: float) -> None:
+    """Run the schedule once the copy holding it lets go, as the old copy does at the end of a deploy."""
+    while not stop.wait(every):
+        try:
+            if not lock.acquire():
+                continue
+        except psycopg.Error as exc:
+            log.warning("could not check the schedule lock (%s); trying again", type(exc).__name__)
+            continue
+        services.scheduler = _start_schedule(services.runner)
+        services.scheduler_elsewhere = False
+        log.info("the copy that ran the schedule has stopped; this one runs it now")
+        return
+
+
 def create_app(
     settings: Settings | None = None,
     *,
@@ -60,6 +88,7 @@ def create_app(
     start_scheduler: bool = True,
     migrate: bool = True,
     frontend_dist: Path = FRONTEND_DIST,
+    lock_retry_seconds: float = LOCK_RETRY_SECONDS,
 ) -> FastAPI:
     settings = settings or get_settings()
     clock = clock or SystemClock()
@@ -80,11 +109,10 @@ def create_app(
         if start_scheduler:
             lock = SchedulerLock(require(settings.database_url, "DATABASE_URL"))
             if lock.acquire():
-                scheduler = build_scheduler(job_runner, BackgroundScheduler(timezone=IST))
-                scheduler.start()
+                scheduler = _start_schedule(job_runner)
             else:
                 elsewhere = True
-        app.state.services = Services(
+        services = app.state.services = Services(
             settings=settings,
             db=database,
             rules=cached_rules(settings.rules_path),
@@ -94,11 +122,24 @@ def create_app(
             scheduler=scheduler,
             scheduler_elsewhere=elsewhere,
         )
+        stop_waiting = threading.Event()
+        waiter = None
+        if elsewhere:
+            log.warning("another copy of the app is running the schedule; this one serves the dashboard "
+                        "and takes the schedule over when that copy stops")
+            waiter = threading.Thread(
+                target=_take_over_when_free, args=(lock, services, stop_waiting, lock_retry_seconds),
+                name="schedule-takeover", daemon=True,
+            )
+            waiter.start()
         try:
             yield
         finally:
-            if scheduler is not None:
-                scheduler.shutdown(wait=False)
+            stop_waiting.set()
+            if waiter is not None:
+                waiter.join(timeout=10)
+            if services.scheduler is not None:
+                services.scheduler.shutdown(wait=False)
             if lock is not None:
                 lock.release()
             if owns_runner:
