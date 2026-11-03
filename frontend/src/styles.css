@@ -72,8 +72,16 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
 .nav a:hover { background: var(--panel); color: var(--fg); }
 .nav a.active { background: var(--accent-soft); color: var(--accent); }
 .nav svg { flex: none; }
-.side-foot { margin-top: auto; display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line-soft); border-radius: var(--radius); font-size: 12px; }
+.side-bottom { margin-top: auto; display: grid; gap: 10px; }
+.side-foot { display: grid; gap: 8px; padding: 12px; border: 1px solid var(--line-soft); border-radius: var(--radius); font-size: 12px; }
 .side-foot .row { display: flex; justify-content: space-between; gap: 8px; }
+.account { display: flex; align-items: center; gap: 10px; padding: 8px 8px 8px 10px; border: 1px solid var(--line-soft); border-radius: var(--radius); margin: 0; }
+.account.compact { border: 0; padding: 0; }
+.avatar { flex: none; width: 28px; height: 28px; border-radius: 50%; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent); font-weight: 800; font-size: 12px; }
+.account-name { flex: 1; min-width: 0; font-weight: 700; font-size: 13px; line-height: 1.2; overflow-wrap: anywhere; }
+.account-name span { display: block; color: var(--muted); font-weight: 600; font-size: 11px; }
+.account .btn { flex: none; width: 32px; height: 32px; padding: 0; justify-content: center; color: var(--fg-2); }
+.account .btn:hover { color: var(--fg); }
 
 .main { min-width: 0; padding: 26px 32px 60px; }
 .page { max-width: 1320px; margin: 0 auto; display: grid; gap: 22px; }
@@ -92,6 +100,7 @@ h1, h2, h3 { margin: 0; text-wrap: balance; }
     border-bottom: 1px solid var(--line-soft);
     padding: env(safe-area-inset-top, 0px) max(12px, env(safe-area-inset-right, 0px)) 0 max(12px, env(safe-area-inset-left, 0px));
   }
+  .topbar-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
   .topbar .brand { padding: 10px 2px 6px; }
   .topbar .nav { flex-direction: row; overflow-x: auto; gap: 4px; padding-bottom: 8px; scrollbar-width: none; }
   .topbar .nav a { white-space: nowrap; padding: 7px 10px; font-size: 13px; }

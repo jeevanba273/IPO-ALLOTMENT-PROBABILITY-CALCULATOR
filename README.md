@@ -12,6 +12,11 @@ sends Telegram alerts. Everything runs by itself once it is started; all times a
 It runs on [Railway](#deploy-to-railway) around the clock: <https://ipo-dashboard-production.up.railway.app>
 (sign in as `admin`). On Windows, **`Start IPO Dashboard.cmd`** opens it.
 
+Signing in happens on the app's own page at `/login`. "Keep me signed in" lasts 30 days; without it the
+session ends when the browser closes, or after 12 hours. Changing `DASHBOARD_PASSWORD_HASH` ends
+every session. After 10 wrong passwords from one address, or 30 from anywhere, in 15 minutes,
+sign-in pauses for up to 15 minutes. Sessions that are already open carry on.
+
 **Locally:** `ipo-intel serve --open` (after [setup](#setup-from-scratch)) starts the app and its
 schedule on <http://127.0.0.1:8000>. Don't keep it running while the Railway copy is: each database
 keeps its own budget count, so two copies spend the API keys twice.

@@ -268,6 +268,12 @@ export interface Health {
   counts: { ipos: number; with_details: number; subscription_rows: number; gmp_points: number };
 }
 
+export interface Session {
+  sign_in: boolean;
+  user: string | null;
+  expires_at: string | null;
+}
+
 export class ApiError extends Error {
   status: number;
   constructor(status: number, message: string) {
@@ -281,6 +287,11 @@ export async function api<T>(path: string, init?: RequestInit): Promise<T> {
     ...init,
     headers: { Accept: "application/json", ...(init?.body ? { "Content-Type": "application/json" } : {}), ...init?.headers },
   });
+  if (response.status === 401) {
+    // The session has ended: sign in again, then come back to this page.
+    const here = window.location.pathname + window.location.search;
+    window.location.assign(`/login?expired=1&next=${encodeURIComponent(here)}`);
+  }
   if (!response.ok) {
     let message = `${response.status} ${response.statusText}`;
     try {

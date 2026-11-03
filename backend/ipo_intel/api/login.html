@@ -1,0 +1,371 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0b1018">
+<meta name="robots" content="noindex, nofollow">
+<title>Sign in · IPO Intelligence</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%230b1018'/%3E%3Cpath d='M7 22l6-7 5 4 7-9' stroke='%23f0a63a' stroke-width='3' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E">
+<!-- The sign-in page of the IPO Intelligence Dashboard: the same palette as frontend/src/styles.css. -->
+<style nonce="$nonce">
+:root {
+  --bg: #0b1018;
+  --bg-raised: #0f1520;
+  --panel: #131a26;
+  --panel-2: #182132;
+  --line: #243049;
+  --line-soft: #1b2436;
+  --fg: #e8ebf2;
+  --fg-2: #b6bdcc;
+  --muted: #7e889c;
+  --accent: #f0a63a;
+  --accent-soft: rgba(240, 166, 58, 0.14);
+  --good: #39cc8c;
+  --good-soft: rgba(57, 204, 140, 0.13);
+  --bad: #f2656b;
+  --bad-soft: rgba(242, 101, 107, 0.12);
+  --warn: #f0c23a;
+  --info: #5aa9f0;
+  --info-soft: rgba(90, 169, 240, 0.12);
+  --c-retail: #f0a63a;
+  --c-nii: #5aa9f0;
+  --c-qib: #a68bf5;
+  --font: "Manrope", ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+  --mono: "JetBrains Mono", ui-monospace, "Cascadia Mono", Consolas, monospace;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html, body { margin: 0; min-height: 100%; }
+body {
+  background:
+    radial-gradient(640px 420px at 78% 46%, rgba(90, 169, 240, 0.05), transparent 70%),
+    var(--bg);
+  color: var(--fg);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+button, input { font: inherit; color: inherit; }
+h1, h2, p { margin: 0; }
+
+.wrap { display: grid; grid-template-columns: minmax(0, 1.08fr) minmax(0, 1fr); min-height: 100vh; min-height: 100dvh; }
+
+/* ---- the story on the left ------------------------------------------------------------ */
+.hero {
+  position: relative; overflow: hidden; display: flex; flex-direction: column; gap: 40px;
+  padding: 40px clamp(32px, 5vw, 64px); background: var(--bg-raised); border-right: 1px solid var(--line-soft);
+}
+.hero::before {
+  content: ""; position: absolute; inset: 0; pointer-events: none; opacity: 0.6;
+  background-image: linear-gradient(var(--line-soft) 1px, transparent 1px), linear-gradient(90deg, var(--line-soft) 1px, transparent 1px);
+  background-size: 44px 44px;
+  -webkit-mask-image: radial-gradient(ellipse 80% 70% at 30% 42%, #000 10%, transparent 75%);
+  mask-image: radial-gradient(ellipse 80% 70% at 30% 42%, #000 10%, transparent 75%);
+}
+.hero::after {
+  content: ""; position: absolute; width: 680px; height: 680px; left: -220px; top: -260px; pointer-events: none;
+  background: radial-gradient(circle, rgba(240, 166, 58, 0.15), transparent 62%);
+}
+.hero > * { position: relative; z-index: 1; }
+
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 34px; height: 34px; border-radius: 9px; background: var(--accent-soft); display: grid; place-items: center; box-shadow: 0 0 0 1px rgba(240, 166, 58, 0.18) inset; }
+.brand-name { font-weight: 800; letter-spacing: -0.02em; font-size: 16px; line-height: 1.15; }
+.brand-name span { display: block; color: var(--muted); font-weight: 600; font-size: 11px; letter-spacing: 0.08em; text-transform: uppercase; }
+
+.story { flex: 1; display: flex; flex-direction: column; justify-content: center; gap: 18px; max-width: 520px; }
+.eyebrow {
+  display: inline-flex; align-items: center; gap: 8px; width: fit-content; height: 26px; padding: 0 11px;
+  border-radius: 999px; border: 1px solid var(--line); background: rgba(19, 26, 38, 0.7);
+  color: var(--fg-2); font-size: 11.5px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase;
+}
+.eyebrow::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+h1 { font-size: clamp(30px, 3.1vw, 42px); font-weight: 800; letter-spacing: -0.035em; line-height: 1.08; text-wrap: balance; }
+h1 em { font-style: normal; color: var(--accent); }
+.lede { color: var(--fg-2); font-size: 15px; max-width: 46ch; }
+
+.art {
+  margin-top: 10px; max-width: 470px; padding: 16px 18px 18px; border-radius: 14px;
+  background: rgba(19, 26, 38, 0.88); border: 1px solid var(--line-soft);
+  box-shadow: 0 28px 60px -28px rgba(0, 0, 0, 0.75);
+}
+.art-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 8px; }
+.art-title { display: grid; gap: 7px; }
+.art-title i { display: block; height: 8px; border-radius: 4px; background: var(--line); }
+.art-title i:first-child { width: 150px; background: #2d3a56; }
+.art-title i:last-child { width: 92px; }
+.art-pill {
+  display: inline-flex; align-items: center; gap: 6px; height: 22px; padding: 0 9px; border-radius: 999px;
+  background: var(--good-soft); color: var(--good); font-size: 11.5px; font-weight: 700;
+}
+.art-pill::before { content: ""; width: 6px; height: 6px; border-radius: 50%; background: currentColor; }
+.art svg { display: block; width: 100%; height: auto; }
+.art .line { stroke-dasharray: 1; stroke-dashoffset: 0; animation: draw 1.6s cubic-bezier(0.3, 0.6, 0.2, 1) both; }
+.art .area { animation: fade 1.2s 0.5s ease both; }
+.art .tip { animation: fade 0.5s 1.4s ease both; }
+.art-bars { display: grid; gap: 9px; margin-top: 12px; }
+.art-bars div { display: grid; grid-template-columns: 48px minmax(0, 1fr); align-items: center; gap: 10px; color: var(--fg-2); font-size: 11.5px; font-weight: 700; }
+.art-bars b { position: relative; height: 7px; border-radius: 999px; background: var(--line-soft); overflow: hidden; }
+.art-bars b::after { content: ""; position: absolute; top: 0; bottom: 0; left: 0; border-radius: 999px; transform-origin: left; animation: grow 1.2s cubic-bezier(0.2, 0.7, 0.2, 1) both; }
+.art-bars .retail::after { width: 78%; background: var(--c-retail); }
+.art-bars .nii::after { width: 61%; background: var(--c-nii); animation-delay: 0.12s; }
+.art-bars .qib::after { width: 94%; background: var(--c-qib); animation-delay: 0.24s; }
+
+.points { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; max-width: 620px; }
+.points li { display: grid; gap: 8px; align-content: start; }
+.points .ico { width: 32px; height: 32px; border-radius: 9px; display: grid; place-items: center; color: var(--accent); background: var(--panel); border: 1px solid var(--line-soft); }
+.points b { display: block; color: var(--fg); font-size: 13px; font-weight: 700; }
+.points span { display: block; color: var(--muted); font-size: 12px; line-height: 1.45; }
+
+/* ---- the form on the right ------------------------------------------------------------ */
+.side { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 18px; padding: 40px 24px; }
+.card {
+  width: min(100%, 408px); display: grid; gap: 18px; padding: 34px 32px 30px; border-radius: 18px;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.025), transparent 120px), var(--panel);
+  border: 1px solid var(--line-soft);
+  box-shadow: 0 32px 80px -32px rgba(0, 0, 0, 0.8), 0 1px 0 rgba(255, 255, 255, 0.03) inset;
+}
+.card-head { display: grid; gap: 6px; }
+.card-head .brand { display: none; margin-bottom: 14px; }
+h2 { font-size: 24px; font-weight: 800; letter-spacing: -0.03em; line-height: 1.15; }
+.sub { color: var(--muted); }
+
+.msg { display: flex; gap: 10px; align-items: flex-start; padding: 11px 12px; border-radius: 10px; font-size: 13px; font-weight: 600; }
+.msg svg { flex: none; margin-top: 1px; }
+.msg.bad { background: var(--bad-soft); color: #ffb3b6; box-shadow: 0 0 0 1px rgba(242, 101, 107, 0.25) inset; }
+.msg.bad svg { color: var(--bad); }
+.msg.info { background: var(--info-soft); color: #bfdcf8; box-shadow: 0 0 0 1px rgba(90, 169, 240, 0.22) inset; }
+.msg.info svg { color: var(--info); }
+.card.invalid { animation: shake 0.42s cubic-bezier(0.36, 0.07, 0.19, 0.97) both; }
+
+.fields { display: grid; gap: 14px; }
+.field { display: grid; gap: 7px; }
+.field label { color: var(--fg-2); font-size: 12.5px; font-weight: 700; }
+.control { position: relative; }
+.control .lead { position: absolute; left: 13px; top: 50%; transform: translateY(-50%); color: var(--muted); pointer-events: none; transition: color 0.15s; }
+.control input {
+  width: 100%; height: 46px; padding: 0 14px 0 41px; border-radius: 10px; border: 1px solid var(--line);
+  background: var(--bg-raised); color: var(--fg); font-size: 15px; transition: border-color 0.15s, box-shadow 0.15s;
+}
+.control input.has-reveal { padding-right: 48px; }
+.control input::placeholder { color: #566079; }
+.control input:hover { border-color: #31405f; }
+.control input:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.control:focus-within .lead { color: var(--accent); }
+.control input[aria-invalid="true"] { border-color: rgba(242, 101, 107, 0.6); }
+.control input[aria-invalid="true"]:focus { border-color: var(--bad); box-shadow: 0 0 0 3px var(--bad-soft); }
+.control input:-webkit-autofill { -webkit-box-shadow: 0 0 0 100px var(--bg-raised) inset; -webkit-text-fill-color: var(--fg); caret-color: var(--fg); }
+.control input:-webkit-autofill:focus { -webkit-box-shadow: 0 0 0 100px var(--bg-raised) inset, 0 0 0 3px var(--accent-soft); }
+.reveal {
+  position: absolute; right: 6px; top: 50%; transform: translateY(-50%); width: 36px; height: 36px;
+  display: grid; place-items: center; border: 0; border-radius: 8px; background: transparent; color: var(--muted); cursor: pointer;
+}
+.reveal:hover { color: var(--fg); background: var(--panel-2); }
+.reveal:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+.reveal .eye-off, .reveal.on .eye { display: none; }
+.reveal.on .eye-off { display: block; }
+.hint { display: flex; align-items: center; gap: 6px; color: var(--warn); font-size: 12px; font-weight: 600; }
+
+.check { display: flex; align-items: center; gap: 9px; color: var(--fg-2); font-size: 13px; font-weight: 600; cursor: pointer; width: fit-content; }
+.check input { width: 16px; height: 16px; margin: 0; accent-color: var(--accent); cursor: pointer; }
+
+.submit {
+  height: 46px; width: 100%; border: 0; border-radius: 10px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; gap: 8px;
+  background: var(--accent); color: #1a1205; font-size: 15px; font-weight: 800; letter-spacing: -0.01em;
+  box-shadow: 0 10px 26px -10px rgba(240, 166, 58, 0.6); transition: filter 0.15s, transform 0.06s;
+}
+.submit:hover { filter: brightness(1.07); }
+.submit:active { transform: translateY(1px); }
+.submit:focus-visible { outline: 2px solid var(--fg); outline-offset: 2px; }
+.submit .arrow { transition: transform 0.15s; }
+.submit:hover .arrow { transform: translateX(2px); }
+.spin { display: none; width: 16px; height: 16px; border-radius: 50%; border: 2px solid rgba(26, 18, 5, 0.3); border-top-color: #1a1205; animation: spin 0.7s linear infinite; }
+.card.busy .submit { cursor: progress; filter: saturate(0.85); }
+.card.busy .spin { display: block; }
+.card.busy .arrow { display: none; }
+
+.foot { display: flex; align-items: center; gap: 7px; color: var(--muted); font-size: 12px; }
+
+@keyframes draw { from { stroke-dashoffset: 1; } }
+@keyframes fade { from { opacity: 0; } }
+@keyframes grow { from { transform: scaleX(0); } }
+@keyframes spin { to { transform: rotate(360deg); } }
+@keyframes shake { 10%, 90% { transform: translateX(-1px); } 20%, 80% { transform: translateX(2px); } 30%, 50%, 70% { transform: translateX(-4px); } 40%, 60% { transform: translateX(4px); } }
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+@media (max-height: 780px) and (min-width: 921px) { .points { display: none; } }
+@media (max-width: 920px) {
+  .wrap { grid-template-columns: minmax(0, 1fr); }
+  .hero { display: none; }
+  .side { justify-content: flex-start; padding: max(28px, env(safe-area-inset-top, 0px)) 16px 32px; }
+  .card { padding: 26px 22px 24px; border-radius: 16px; margin-top: min(8vh, 56px); }
+  .card-head .brand { display: flex; }
+  .control input { font-size: 16px; }
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <section class="hero">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f0a63a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-7 5 4 7-9"/></svg>
+      </span>
+      <span class="brand-name">IPO Intelligence<span>India · IST</span></span>
+    </div>
+
+    <div class="story">
+      <span class="eyebrow">Private dashboard</span>
+      <h1>Every Indian IPO, from first bid to <em>listing day</em>.</h1>
+      <p class="lede">Subscription by category, allotment odds, grey-market premium and listing gains for mainboard and SME issues, kept up to date through the trading day.</p>
+
+      <div class="art" aria-hidden="true">
+        <div class="art-head">
+          <span class="art-title"><i></i><i></i></span>
+          <span class="art-pill">Open</span>
+        </div>
+        <svg viewBox="0 0 360 118" fill="none">
+          <defs>
+            <linearGradient id="fill" x1="0" y1="0" x2="0" y2="1">
+              <stop offset="0" stop-color="#f0a63a" stop-opacity="0.32"/>
+              <stop offset="1" stop-color="#f0a63a" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <path d="M0 29.5H360M0 59.5H360M0 89.5H360" stroke="#1b2436" stroke-dasharray="3 5"/>
+          <path class="area" d="M0 98L29 91L58 95L87 80L116 84L145 66L174 72L203 55L232 60L261 43L290 48L319 30L348 22V118H0Z" fill="url(#fill)"/>
+          <path class="line" pathLength="1" d="M0 98L29 91L58 95L87 80L116 84L145 66L174 72L203 55L232 60L261 43L290 48L319 30L348 22" stroke="#f0a63a" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+          <g class="tip">
+            <circle cx="348" cy="22" r="9" fill="#f0a63a" fill-opacity="0.18"/>
+            <circle cx="348" cy="22" r="4" fill="#f0a63a" stroke="#131a26" stroke-width="2"/>
+          </g>
+        </svg>
+        <div class="art-bars">
+          <div>Retail<b class="retail"></b></div>
+          <div>NII<b class="nii"></b></div>
+          <div>QIB<b class="qib"></b></div>
+        </div>
+      </div>
+    </div>
+
+    <ul class="points">
+      <li>
+        <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M19 5L5 19"/><circle cx="7" cy="7" r="2.5"/><circle cx="17" cy="17" r="2.5"/></svg></span>
+        <span><b>Allotment odds</b><span>Retail, small and big NII, from live subscription.</span></span>
+      </li>
+      <li>
+        <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8M15 7h6v6"/></svg></span>
+        <span><b>Grey-market premium</b><span>Tracked through the day, with a confidence flag.</span></span>
+      </li>
+      <li>
+        <span class="ico"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20h16M7 16v-6M12 16V6M17 16v-4"/></svg></span>
+        <span><b>Listing performance</b><span>How past issues listed against their GMP.</span></span>
+      </li>
+    </ul>
+  </section>
+
+  <main class="side">
+    <form class="card $state" id="signin" method="post" action="/login">
+      <div class="card-head">
+        <div class="brand">
+          <span class="brand-mark">
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="#f0a63a" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-7 5 4 7-9"/></svg>
+          </span>
+          <span class="brand-name">IPO Intelligence<span>India · IST</span></span>
+        </div>
+        <h2>Sign in</h2>
+        <p class="sub">Welcome back. This dashboard is private.</p>
+      </div>
+
+      $message
+
+      <input type="hidden" name="next" value="$next">
+      <div class="fields">
+        <div class="field">
+          <label for="user">User name</label>
+          <div class="control">
+            <svg class="lead" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M20 21a8 8 0 10-16 0"/><circle cx="12" cy="8" r="5"/></svg>
+            <input id="user" name="user" type="text" value="$user" autocomplete="username" autocapitalize="none" autocorrect="off" spellcheck="false" maxlength="200" required $focus_user>
+          </div>
+        </div>
+        <div class="field">
+          <label for="password">Password</label>
+          <div class="control">
+            <svg class="lead" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+            <input id="password" class="has-reveal" name="password" type="password" autocomplete="current-password" maxlength="1000" required $invalid $focus_password>
+            <button id="reveal" class="reveal" type="button" aria-label="Show password" aria-pressed="false" aria-controls="password" hidden>
+              <svg class="eye" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              <svg class="eye-off" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 3l18 18M10.6 5.1A10.7 10.7 0 0112 5c6.5 0 10 7 10 7a17.6 17.6 0 01-3.2 4.2M6.6 6.6C3.9 8.3 2 12 2 12s3.5 7 10 7c1.8 0 3.4-.5 4.8-1.3M9.9 9.9a3 3 0 004.2 4.2"/></svg>
+            </button>
+          </div>
+          <p class="hint" id="caps" hidden>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 8v5M12 16.5v.5M10.3 3.8L2.6 17a2 2 0 001.7 3h15.4a2 2 0 001.7-3L13.7 3.8a2 2 0 00-3.4 0z"/></svg>
+            Caps Lock is on.
+          </p>
+        </div>
+      </div>
+
+      <label class="check"><input type="checkbox" name="remember" value="1" $remember>Keep me signed in for 30 days</label>
+
+      <button class="submit" type="submit">
+        <span class="spin" aria-hidden="true"></span>
+        Sign in
+        <svg class="arrow" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
+      </button>
+    </form>
+
+    <p class="foot">
+      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V7a4 4 0 018 0v4"/></svg>
+      Private dashboard · times shown in IST
+    </p>
+  </main>
+</div>
+
+<script nonce="$nonce">
+(function () {
+  var form = document.getElementById("signin");
+  var password = document.getElementById("password");
+  var reveal = document.getElementById("reveal");
+  var caps = document.getElementById("caps");
+
+  reveal.hidden = false;
+  reveal.addEventListener("click", function () {
+    var show = password.type === "password";
+    password.type = show ? "text" : "password";
+    reveal.classList.toggle("on", show);
+    reveal.setAttribute("aria-pressed", show ? "true" : "false");
+    reveal.setAttribute("aria-label", show ? "Hide password" : "Show password");
+    password.focus();
+  });
+
+  function capsLock(event) {
+    if (event.getModifierState) caps.hidden = !event.getModifierState("CapsLock");
+  }
+  password.addEventListener("keydown", capsLock);
+  password.addEventListener("keyup", capsLock);
+  password.addEventListener("blur", function () { caps.hidden = true; });
+
+  form.addEventListener("submit", function (event) {
+    if (form.classList.contains("busy")) { event.preventDefault(); return; }
+    password.type = "password";
+    form.classList.remove("invalid");
+    form.classList.add("busy");
+    form.setAttribute("aria-busy", "true");
+  });
+  // Coming back with the Back button shows the page as it was left.
+  window.addEventListener("pageshow", function () {
+    form.classList.remove("busy");
+    form.removeAttribute("aria-busy");
+  });
+})();
+</script>
+</body>
+</html>

@@ -1,5 +1,5 @@
 import { NavLink, Route, Routes } from "react-router-dom";
-import type { Health } from "./api";
+import type { Health, Session } from "./api";
 import { useApi } from "./api";
 import { count, istTime } from "./format";
 import { Icon } from "./ui";
@@ -85,6 +85,29 @@ function SideStatus() {
   );
 }
 
+/** Who is signed in, with a way out. Nothing when the dashboard has no sign-in (on this machine only). */
+function Account({ session, compact = false }: { session: Session | null; compact?: boolean }) {
+  if (!session?.sign_in || !session.user) return null;
+  return (
+    <form method="post" action="/logout" className={compact ? "account compact" : "account"}>
+      {!compact && (
+        <>
+          <span className="avatar" aria-hidden="true">
+            {session.user.slice(0, 1).toUpperCase()}
+          </span>
+          <span className="account-name">
+            {session.user}
+            <span>Signed in</span>
+          </span>
+        </>
+      )}
+      <button type="submit" className="btn ghost icon" title="Sign out" aria-label="Sign out">
+        <Icon name="signout" size={15} />
+      </button>
+    </form>
+  );
+}
+
 function NotFound() {
   return (
     <div className="page">
@@ -97,16 +120,23 @@ function NotFound() {
 }
 
 export default function App() {
+  const { data: session } = useApi<Session>("/api/session");
   return (
     <div className="shell">
       <aside className="sidebar">
         <Brand />
         <Nav />
-        <SideStatus />
+        <div className="side-bottom">
+          <SideStatus />
+          <Account session={session} />
+        </div>
       </aside>
       <div style={{ minWidth: 0 }}>
         <header className="topbar">
-          <Brand />
+          <div className="topbar-row">
+            <Brand />
+            <Account session={session} compact />
+          </div>
           <Nav />
         </header>
         <main className="main">

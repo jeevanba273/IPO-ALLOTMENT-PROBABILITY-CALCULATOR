@@ -58,7 +58,7 @@ class Settings(BaseSettings):
     database_url: SecretStr | None = None
     telegram_bot_token: SecretStr | None = None
     telegram_chat_id: SecretStr | None = None
-    # Dashboard sign-in (HTTP Basic), as a hash from `ipo-intel hash-password`.
+    # Dashboard sign-in (the /login page), as a hash from `ipo-intel hash-password`.
     # Required to serve beyond this machine.
     dashboard_password_hash: SecretStr | None = None
     dashboard_user: str = "admin"
