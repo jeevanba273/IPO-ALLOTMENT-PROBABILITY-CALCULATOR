@@ -9,11 +9,12 @@ sends Telegram alerts. Everything runs by itself once it is started; all times a
 
 ## Start it
 
-**Windows:** double-click **`Start IPO Dashboard.cmd`**. It starts the local database and the app, then
-opens <http://127.0.0.1:8000>. Keep its window open (minimised is fine); closing it stops the schedule.
+It runs on [Railway](#deploy-to-railway) around the clock: <https://ipo-dashboard-production.up.railway.app>
+(sign in as `admin`). On Windows, **`Start IPO Dashboard.cmd`** opens it.
 
-**Anywhere else:** `ipo-intel serve --open` (after [setup](#setup-from-scratch)), or deploy it
-([Railway](#deploy-to-railway)) so it runs around the clock.
+**Locally:** `ipo-intel serve --open` (after [setup](#setup-from-scratch)) starts the app and its
+schedule on <http://127.0.0.1:8000>. Don't keep it running while the Railway copy is: each database
+keeps its own budget count, so two copies spend the API keys twice.
 
 ## What's in it
 
